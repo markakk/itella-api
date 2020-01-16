@@ -44,7 +44,7 @@ if ($current_token['expires'] <= time()) {
 ```php
 $sender = new \Mijora\Itella\Shipment\Party(\Mijora\Itella\Shipment\Party::ROLE_SENDER);
 $sender
-  ->setContract('65407')
+  ->setContract('000000')
   ->setName1('TEST Web Shop')
   ->setStreet1('Raudondvario pl. 150')
   ->setPostCode('47174')
@@ -59,8 +59,8 @@ $sender
 $receiver = new \Mijora\Itella\Shipment\Party(\Mijora\Itella\Shipment\Party::ROLE_RECEIVER);
 $receiver
   ->setName1('Testas')
-  ->setStreet1('Pavytes g. 4')
-  ->setPostCode('46129')
+  ->setStreet1('Testo g. 4')
+  ->setPostCode('47174')
   ->setCity('Kaunas')
   ->setCountryCode('LT')
   ->setContactName('Testas')
@@ -71,8 +71,8 @@ $receiver
 When sending to pickup point (SMARTPOST) additional info must be supplied
 ```php
   ->setName2('Testutis') // if SmartPost, then name of pick-up point is given
-  ->setStreet1('Testutis') // if SmartPost, then street address of pick-up point is given
-  ->setPostCode('Testutis') // if SmartPost, then postal code of pick-up point is given
+  ->setStreet1('Testo g. 4') // if SmartPost, then street address of pick-up point is given
+  ->setPostCode('47174') // if SmartPost, then postal code of pick-up point is given
 ```
 
 ### Creating Order Items
@@ -103,7 +103,7 @@ $isTest = false;
 $shipment = new \Mijora\Itella\Shipment\Shipment($isTest);
 $shipment
   ->setAuth($auth) // previously created Auth object
-  ->setSenderId('ma_LT100007721311_1') // Itella API user
+  ->setSenderId('sender_id') // Itella API user
   ->setReceiverId('ITELLT') // Itella code for Lithuania
   ->setShipmentNumber('TESTNR231') // Shipment/waybill identifier
   ->setShipmentDateTime(date('c')) // when shipment is ready for transport. Format must be ISO 8601, e.g. 2019-10-11T10:00:00+03:00
