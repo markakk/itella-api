@@ -1,0 +1,21 @@
+{
+    "name": "mijora/itella-api",
+    "description": "Itella API wrapper",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Rimvydas",
+            "email": "lithstud@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Mijora\\Itella\\": "src/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "prepend-autoloader": false
+    }
+}
