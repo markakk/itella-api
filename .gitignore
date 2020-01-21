@@ -6,3 +6,4 @@ temp/*
 !temp/index.php
 
 example/env.php
+**/token.json

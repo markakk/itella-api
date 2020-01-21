@@ -159,3 +159,16 @@ $itellaLoc = $itellaPickupPointsObj->getLocationsByCountry('LT');
 // now points can be stored into file or database for future use
 $itellaPickupPointsObj->saveLocationsToJSONFile('test.json', json_encode($itellaLoc));
 ```
+
+
+### Printing Label
+---
+Labels generated using Shipment class object, for that reasong Shipment object must be created beforehand.
+Label printing has no validations and assumes al the supplied information is correct.
+```php
+$label = new \Mijora\Itella\Pdf\Label($shipment);
+$done = $label->printLabel($fileName, $path);
+```
+$fileName - is mandatory ex. 'sample.pdf'
+$path - optional, path to where save file (must end with /)
+in case $path is not supplied (null) pdf will be displayed in browser, otherwise saved to file at $path (in this case $done will be true).

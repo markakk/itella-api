@@ -22,7 +22,7 @@ use Mijora\Itella\Shipment\Party;
  * Shipment Tests
  */
 
- // env.php contains $user, $pass, $contract variables needed in these examples
+// env.php contains $user, $pass, $contract variables needed in these examples
 if (!file_exists('env.php')) {
   copy('sample.env.php', 'env.php');
 }
@@ -104,9 +104,16 @@ $item
 $item2 = new \Mijora\Itella\Shipment\GoodsItem(GoodsItem::PRODUCT_COURIER);
 $item2
   ->setTrackingNumber('JJFItestnr00000000016') // mandatory
-  ->addExtraService([3101, 3104]) // can have multiple extra services (either in array or as single) 
+  ->addExtraService([3101, 3102, 3104]) // can have multiple extra services (either in array or as single) 
   ->setGrossWeight(2) // kg, optional
   ->setVolume(0.1); // m3, optional
+$item3 = new \Mijora\Itella\Shipment\GoodsItem(GoodsItem::PRODUCT_COURIER);
+$item3
+  ->setTrackingNumber('JJFItestnr00000000017') // mandatory
+  ->addExtraService([3101, 3102, 3104]) // can have multiple extra services (either in array or as single) 
+  //->setGrossWeight(2) // kg, optional
+  //->setVolume(0.1) // m3, optional
+;
 
 //echo $item->getXML()->asXML();
 
@@ -119,24 +126,34 @@ $shipment
   ->setShipmentDateTime(date('c')) // when package will be ready (just use current time)
   ->setSenderParty($sender) // Sender class object
   ->setReceiverParty($receiver) // Receiver class object
-  ->addGoodsItem($item) // GoodsItem class object (or in case of multiparcel can be array of GoodsItem)
+  ->addGoodsItem([$item2, $item3]) // GoodsItem class object (or in case of multiparcel can be array of GoodsItem)
   // bellow is COD information required when GoodsItem has COD extra service set
-  // ->setBIC('testBIC')
-  // ->setIBAN('LT123425678')
-  // ->setValue(100.50)
-  // ->setReference($shipment->gereateCODReference('012'))
-;
+  ->setBIC('testBIC')
+  ->setIBAN('LT123425678')
+  ->setValue(100.50)
+  ->setReference($shipment->gereateCODReference('012'));
+
+// Label tests
+$label = new \Mijora\Itella\Pdf\Label($shipment);
+$done = $label->printLabel('sample.pdf', dirname(__FILE__) . '/../temp/');
+if ($done) {
+  echo '<br>PDF Saved to file';
+}
 
 //To get Shipment Document creation time and Sequence (used to identify requests)
 $documentDateTime = $shipment->getDocumentDateTime();
 $sequence = $shipment->getSequence();
 
-$result = $shipment->sendShipment(); 
+// $result = $shipment->sendShipment(); 
+$result['success_description'] = 'Imitadet success';
 if (isset($result['error'])) {
   echo '<br>Shipment Failed with error: ' . $result['error_description'];
 } else {
   echo '<br>Shipment sent: ' . $result['success_description'];
 }
+
+echo '<br>Done';
+
 // echo $shipment->getXML()->asXML();
 // Debuging request and response
 // $transfer_log_file = '../temp/transfer.log';

@@ -193,9 +193,6 @@ class Shipment
     // GoodsItems XML
     $goods = $shipment->addChild('GoodsItems');
     foreach ($this->goodsItems as $goodsItem) {
-      if ($this->totalItems > 1 && $goodsItem->hasExtraService('3102')) {
-        $goodsItem = $goodsItem->setPackageQuantity($this->totalItems);
-      }
       $goodsItem->getXML($goods);
     }
 
@@ -306,6 +303,12 @@ class Shipment
       }
     }
     $this->goodsItems = array_merge($this->goodsItems, $goodsItem);
+    // update package count in all items
+    foreach ($this->goodsItems as $registeredItem) {
+      if ($this->totalItems > 1 && $registeredItem->hasExtraService('3102')) {
+        $registeredItem = $registeredItem->setPackageQuantity($this->totalItems);
+      }
+    }
     return $this;
   }
 

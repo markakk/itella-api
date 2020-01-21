@@ -8,7 +8,9 @@
             "email": "lithstud@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "setasign/fpdi-tcpdf": "^2.2"
+    },
     "autoload": {
         "psr-4": {
             "Mijora\\Itella\\": "src/"
