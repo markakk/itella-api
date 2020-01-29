@@ -2,7 +2,7 @@
     "name": "mijora/itella-api",
     "description": "Itella API wrapper",
     "type": "library",
-    "version": "0.9.1",
+    "version": "0.9.4",
     "authors": [
         {
             "name": "Rimvydas",
@@ -16,9 +16,5 @@
         "psr-4": {
             "Mijora\\Itella\\": "src/"
         }
-    },
-    "config": {
-        "preferred-install": "dist",
-        "prepend-autoloader": false
     }
 }

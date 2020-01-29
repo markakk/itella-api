@@ -54,7 +54,7 @@ class Label
   public function __construct($shipment)
   {
     $this->shipment = $shipment;
-    $this->pdf = new \setasign\Fpdi\TcpdfFpdi(PDF_PAGE_ORIENTATION, 'mm', array(110, 190), true, 'UTF-8', false);
+    $this->pdf = new \setasign\Fpdi\Tcpdf\Fpdi(PDF_PAGE_ORIENTATION, 'mm', array(110, 190), true, 'UTF-8', false);
 
     $this->pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
