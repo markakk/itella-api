@@ -124,24 +124,16 @@ class Shipment
 
     if (empty($this->codBIC)) {
       throw new \Exception("Missing COD BIC.", 3101);
-    } else {
-      echo '<br> BIC valid <br>';
-    }
+    } 
     if (empty($this->codIBAN)) {
       throw new \Exception("Missing COD IBAN.", 3101);
-    } else {
-      echo '<br> IBAN valid <br>';
-    }
+    } 
     if (empty($this->codValue)) {
       throw new \Exception("Missing COD value.", 3101);
-    } else {
-      echo '<br> Value valid <br>';
-    }
+    } 
     if (empty($this->codReference)) {
       throw new \Exception("Missing COD reference.", 3101);
-    } else {
-      echo '<br> Ref valid <br>';
-    }
+    } 
 
     return true;
   }
