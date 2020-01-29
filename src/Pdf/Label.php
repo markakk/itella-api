@@ -9,6 +9,7 @@ class Label
   private $shipment;
 
   private $out_base64 = false;
+  private $out_string = false;
 
   private $defaultFont = array(
     'family' => 'helvetica',
@@ -424,8 +425,9 @@ class Label
 
     // ---------------------------------------------------------
     //Close and output PDF document
-    if ($this->out_base64) {
-      return $this->pdf->Output($fileName, 'E');
+    if ($this->out_string) {
+      $pdf_string = $this->pdf->Output($fileName, 'S');
+      return $this->out_base64 ? base64_encode($pdf_string) : $pdf_string;
     }
     if ($path == null) {
       $this->pdf->Output($fileName, 'I');
@@ -444,6 +446,12 @@ class Label
   public function setBase64($isOn = false)
   {
     $this->out_base64 = $isOn;
+    return $this;
+  }
+
+  public function setToString($isOn = false)
+  {
+    $this->out_string = $isOn;
     return $this;
   }
 
