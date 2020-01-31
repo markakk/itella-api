@@ -61,7 +61,12 @@ class Manifest
    */
   public function addItem($item)
   {
+    // ignore item if its not array
     if (!is_array($item)) {
+      return $this;
+    }
+
+    if (isset($item['track_num'])) {
       $item = array($item);
     }
 
