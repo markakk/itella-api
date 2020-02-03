@@ -2,20 +2,19 @@
     "name": "mijora/itella-api",
     "description": "Itella API wrapper",
     "type": "library",
+    "version": "0.9.5",
     "authors": [
         {
             "name": "Rimvydas",
             "email": "lithstud@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "setasign/fpdi-tcpdf": "^2.2"
+    },
     "autoload": {
         "psr-4": {
             "Mijora\\Itella\\": "src/"
         }
-    },
-    "config": {
-        "preferred-install": "dist",
-        "prepend-autoloader": false
     }
 }

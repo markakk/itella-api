@@ -124,24 +124,16 @@ class Shipment
 
     if (empty($this->codBIC)) {
       throw new \Exception("Missing COD BIC.", 3101);
-    } else {
-      echo '<br> BIC valid <br>';
-    }
+    } 
     if (empty($this->codIBAN)) {
       throw new \Exception("Missing COD IBAN.", 3101);
-    } else {
-      echo '<br> IBAN valid <br>';
-    }
+    } 
     if (empty($this->codValue)) {
       throw new \Exception("Missing COD value.", 3101);
-    } else {
-      echo '<br> Value valid <br>';
-    }
+    } 
     if (empty($this->codReference)) {
       throw new \Exception("Missing COD reference.", 3101);
-    } else {
-      echo '<br> Ref valid <br>';
-    }
+    } 
 
     return true;
   }
@@ -193,9 +185,6 @@ class Shipment
     // GoodsItems XML
     $goods = $shipment->addChild('GoodsItems');
     foreach ($this->goodsItems as $goodsItem) {
-      if ($this->totalItems > 1 && $goodsItem->hasExtraService('3102')) {
-        $goodsItem = $goodsItem->setPackageQuantity($this->totalItems);
-      }
       $goodsItem->getXML($goods);
     }
 
@@ -306,6 +295,12 @@ class Shipment
       }
     }
     $this->goodsItems = array_merge($this->goodsItems, $goodsItem);
+    // update package count in all items
+    foreach ($this->goodsItems as $registeredItem) {
+      if ($this->totalItems > 1 && $registeredItem->hasExtraService('3102')) {
+        $registeredItem = $registeredItem->setPackageQuantity($this->totalItems);
+      }
+    }
     return $this;
   }
 
