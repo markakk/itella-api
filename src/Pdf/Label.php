@@ -1,8 +1,9 @@
 <?php
 
-namespace Mijora\Itella\Pdf;
+// TODO: TO BE REMOVED AS IT IS NO LONGER USED.
 
-//require_once(dirname(__FILE__) . '/../../vendor/autoload.php');
+
+namespace Mijora\Itella\Pdf;
 
 class Label
 {
