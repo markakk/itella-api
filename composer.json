@@ -2,7 +2,7 @@
     "name": "mijora/itella-api",
     "description": "Itella API wrapper",
     "type": "library",
-    "version": "0.9.6",
+    "version": "2.0.0",
     "authors": [
         {
             "name": "Rimvydas",
@@ -10,7 +10,9 @@
         }
     ],
     "require": {
-        "setasign/fpdi-tcpdf": "^2.2"
+        "pakettikauppa/api-library": "^2.0",
+        "setasign/fpdi": "^2.3",
+        "tecnickcom/tcpdf": "^6.3"
     },
     "autoload": {
         "psr-4": {
