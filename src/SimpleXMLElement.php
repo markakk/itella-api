@@ -1,5 +1,5 @@
 <?php
-
+// TODO: TO BE REMOVED AS IT IS NO LONGER USED.
 namespace Mijora\Itella;
 
 class SimpleXMLElement extends \SimpleXMLElement

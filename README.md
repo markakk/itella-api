@@ -1,174 +1,310 @@
-# Itella-API
+# Itella-API v2.0.0
 
-### How to use:
+Its a wrapper library for Pakettikauppa API library.
 
+## Using Itella-API library
+- `__PATH_TO_LIB__` is path to where itella-api is placed. This will load Mijora\Itella namespace
 ```php
 require __PATH_TO_LIB__ . 'itella-api/vendor/autoload.php';
 ```
 
-where \_\_PATH_TO_LIB__ is path to where itella-api is placed. This will load Mijora\Itella namespace
-
-Most of values is expected to be correct - in some cases where certains values are important and not supplied it will throw Exception.
-
-
-### Creating Authentication Object
----
+Validations, checks, etc. throws ItellaException and calls to library classes should be wrapped in: blocks 
 ```php
-$isTest = false;
-$auth = new \Mijora\Itella\Auth($user, $pass, $isTest);
-$token_array = $auth->$auth->getAuth();
-```
-$user - Itella API user
-
-$pass - Itella API password
-
-$isTest - should api use test mode (boolean)
-
-$token_array will contain either error message (if something went wrong) or [access_token, expires, expires_in, token_type] if succesfull. Token is issued for 1h - to check for that please use expires key - UNIX timestamp when token expires. It is possible to pass array into Auth object instead of using getAuth() to request new token.
-
-Example usage
-```php
-$current_token = load_previously_saved_token_array();
-if ($current_token['expires'] <= time()) {
-  // Getging new Token
-  $new_token_array = $auth->getAuth();
-  file_put_contents('token.json', json_encode($new_token_array));
-} else {
-  // Using saved Token
-  $auth->setTokenArr($current_token);
+try {
+  // ...
+} catch (ItellaException $e) {
+  // ...
 }
 ```
 
-### Creating Sender
+Any function starting with `add` or `set` returns its class so functions can be chained.
+
+## Authentication
 ---
-```php
-$sender = new \Mijora\Itella\Shipment\Party(\Mijora\Itella\Shipment\Party::ROLE_SENDER);
-$sender
-  ->setContract('000000')
-  ->setName1('TEST Web Shop')
-  ->setStreet1('Raudondvario pl. 150')
-  ->setPostCode('47174')
-  ->setCity('Kaunas')
-  ->setCountryCode('LT');
-```
+Uses supplied `user` and `secret`. It is called during Shipment creation.
 
 
-### Creating Receiver
+## Creating Sender
 ---
+`Party::ROLE_SENDER` is used to identify sender.
+
+Minimum required setup:
+- Phone number must be in international format, library will try to fix given number or throw ItellaException.
 ```php
-$receiver = new \Mijora\Itella\Shipment\Party(\Mijora\Itella\Shipment\Party::ROLE_RECEIVER);
-$receiver
-  ->setName1('Testas')
-  ->setStreet1('Testo g. 4')
-  ->setPostCode('47174')
-  ->setCity('Kaunas')
-  ->setCountryCode('LT')
-  ->setContactName('Testas')
-  ->setContactMobile('865412345')
-  ->setContactEmail('testas@testutis.lt'); // optional
-```
+use Mijora\Itella\Shipment\Party;
+use Mijora\Itella\ItellaException;
 
-When sending to pickup point (SMARTPOST) additional info must be supplied
-```php
-  ->setName2('Testutis') // if SmartPost, then name of pick-up point is given
-  ->setStreet1('Testo g. 4') // if SmartPost, then street address of pick-up point is given
-  ->setPostCode('47174') // if SmartPost, then postal code of pick-up point is given
-```
-
-### Creating Order Items
----
-```php
-$item = new \Mijora\Itella\Shipment\GoodsItem(\Mijora\Itella\Shipment\GoodsItem::PRODUCT_COURIER);
-$item
-  ->addExtraService([3102, 3101]) // Multi
-  ->setTrackingNumber('Testas123');
-```
-
-- \Mijora\Itella\Shipment\GoodsItem::PRODUCT_COURIER - code when courier option is selected
-- \Mijora\Itella\Shipment\GoodsItem::PRODUCT_PICKUP - code when pickup point option is selected (DOES NOT ALLOW EXTRA SERVICES)
-
-PRODUCT_COURIER available extra services:
-- 3101 - Cash On Delivery (only by credit card), COD information MUST be set in Shipment object
-- 3102 - Multi Parcel
-- 3104 - Fragile
-- 3166 - Call before Delivery
-- 3174 - Oversized
-
-In case of multi parcels simply create multiple GoodsItem objects with set multi parcel extra service (as well any other service that is needed). It is considered as same order and can have no more than 10 parcels. Each must have different Tracking Number set.
-
-### Create Shipment
----
-```php
-$isTest = false;
-$shipment = new \Mijora\Itella\Shipment\Shipment($isTest);
-$shipment
-  ->setAuth($auth) // previously created Auth object
-  ->setSenderId('sender_id') // Itella API user
-  ->setReceiverId('ITELLT') // Itella code for Lithuania
-  ->setShipmentNumber('TESTNR231') // Shipment/waybill identifier
-  ->setShipmentDateTime(date('c')) // when shipment is ready for transport. Format must be ISO 8601, e.g. 2019-10-11T10:00:00+03:00
-  ->setSenderParty($sender) // previously created Sender object
-  ->setReceiverParty($receiver) // previously created Receiver object
-  ->addGoodsItem([$item2, $item2, $item2, $item2]) // array of previously created GoodsItem objects, can also be just GoodsItem onject
-  // needed only if COD extra service is used
-  ->setBIC('testBIC') // Bank BIC
-  ->setIBAN('LT123425678') // Bank account
-  ->setValue(100.50) // Total to pay in EUR
-  ->setReference($shipment->gereateCODReference('012')); // COD reference,here using function from Shipment class to generate reference code by order ID
-```
-
-To get Shipment Document creation time and Sequence (used to identify requests)
-```php
-$documentDateTime = $shipment->getDocumentDateTime();
-$sequence = $shipment->getSequence();
-```
-
-Once all information is supplied -  send request to Itella API server
-```php
-$result = $shipment->sendShipment();
-if (isset($result['error'])) {
-  echo '<br>Shipment Failed with error: ' . $result['error_description'];
-} else {
-  echo '<br>Shipment sent: ' . $result['success_description'];
+try {
+  $sender = new Party(Party::ROLE_SENDER);
+  $sender
+    // ->setContract('000000')            // currently not used
+    ->setName1('TEST Web Shop')           // sender name
+    ->setStreet1('Test str. 150')         // sender address
+    ->setPostCode('47174')                // sender post code
+    ->setCity('Kaunas')                   // sender city
+    ->setCountryCode('LT')                // sender country code in ISO 3166-1 alpha-2 format (two letter code)
+    ->setContactMobile('+37061234567')    // sender phone number in international format
+    ->setContactEmail('sender@test.lt');  // sender email
+} catch (ItellaException $e) {
+  // Handle validation exceptions here
 }
 ```
 
-$result is array [error, error_description] or [success, success_description]
 
-Once used Tracking Number should not be reused again.
+## Creating Receiver
+---
+`Party::ROLE_RECEIVER` is used to identify sender.
 
-When testing it is usefull to check generated XML for that each class (except Auth) has getXML() function that return SimpleXMLElement.
-
+Minimum required setup:
+- Phone number must be in international format, library will try to fix given number or throw ItellaException.
 ```php
-echo $sender->getXML()->asXML();
-echo $receiver->getXML()->asXML();
-echo $item->getXML()->asXML();
-echo $shipment->getXML()->asXML();
+use Mijora\Itella\Shipment\Party;
+use Mijora\Itella\ItellaException;
+
+try {
+  $receiver = new Party(Party::ROLE_RECEIVER);
+  $receiver
+    ->setName1('Testas')                    // receiver name
+    ->setStreet1('None str. 4')             // receiver address
+    ->setPostCode('47174')                  // receiver post code
+    ->setCity('Kaunas')                     // receiver city
+    ->setCountryCode('LT')                  // receiver country code in ISO 3166-1 alpha-2 format (two letter code)
+    ->setContactMobile('+37067654321')      // receiver phone number in international format
+    ->setContactEmail('receiver@test.lt');  // optional, receiver email
+} catch (ItellaException $e) {
+  // Handle validation exceptions here
+}
 ```
 
 
-### Locations API
+## Creating Order Items
 ---
-When using Pickup Point option it is important to have correct list of pickup points
+- If using multiparcel additional service simply create multiple GoodsItem and register them to Shipment.
 ```php
-// Initiate locations object
-$itellaPickupPointsObj = new \Mijora\Itella\Locations\PickupPoints('https://locationservice.posti.com/api/2/location');
+use Mijora\Itella\Shipment\GoodsItem;
+use Mijora\Itella\ItellaException;
+
+try {
+  $item = new GoodsItem();
+  $item
+    ->setGrossWeight(0.5)       // kg, optional
+    ->setVolume(0.5)            // m3, optional
+    ->setContentDesc('Stuff');  // optional package content description
+} catch (ItellaException $e) {
+  // Handle validation exceptions here
+}
+```
+
+## Creating Additional Services
+---
+**Shipment::PRODUCT_COURIER** available additional services:
+- Must be set manualy
+  - 3101 - Cash On Delivery (only by credit card). 
+    **Requires** array with this information:
+      - `amount`    => amount to be payed in EUR,
+      - `account`   => bank account (IBAN),
+      - `codbic`    => bank BIC, 
+      - `reference` => COD Reference, can be used `Helper::generateCODReference($id)` where `$id` can be Order ID.
+  - 3104 - Fragile
+  - 3166 - Call before Delivery
+  - 3174 - Oversized
+- Will be set automatically
+  - 3102 - Multi Parcel, will be set automatically if Shipment has more than 1 and up to 10 GoodsItem.
+    **Requires** array with this information:
+      - `count` => Total of registered GoodsItem.
+
+
+**Shipment::PRODUCT_PICKUP** available additional services:
+- Will be set automatically
+  - 3201 - Pickup Point, is set automatically when pick up point ID is registered into Shipment.
+    **Requires** array with this information:
+      - `pickup_point_id` => Pickup point ID.
+
+Trying to set additional service that is not available for set product code will throw ItellaException.
+
+Creating additional service that does not need extra information (eg. with Fragile):
+```php
+use Mijora\Itella\Shipment\AdditionalService;
+use Mijora\Itella\ItellaException;
+
+try {
+  $service_fragile = new AdditionalService(AdditionalService::FRAGILE);
+} catch (ItellaException $e) {
+  // Handle validation exceptions here
+}
+```
+
+Creating COD additional service:
+```php
+use Mijora\Itella\Shipment\AdditionalService;
+use Mijora\Itella\Helper;
+use Mijora\Itella\ItellaException;
+
+try {
+  $service_cod = new AdditionalService(
+    AdditionalService::COD,
+    array(
+      'amount'    => 100,
+      'codbic'    => 'XBC0101',
+      'account'   => 'LT100000000000',
+      'reference' => Helper::generateCODReference('666')
+    )
+  );
+} catch (ItellaException $e) {
+  // Handle validation exceptions here
+}
+```
+
+
+## Create Shipment
+---
+Available product codes:
+* Shipment::PRODUCT_COURIER = 2317
+* Shipment::PRODUCT_PICKUP  = 2711
+
+Shipment can be either one, but never both. See Additional Services for what services is available to each product code.
+
+**Shipment product code should always be set first.**
+
+When registering GoodsItem its possible to register one at a time using
+`$shipment->addGoodsItem(GoodsItem)`
+or multiple passing them in array to
+`$shipment->addGoodsItems(array(GoodsItem, GoodsItem))`
+
+When registering AdditionalService its possible to register one at a time using
+`$shipment->addAdditionalService(AdditionalService)`
+or multiple passing them in array to
+`$shipment->addAdditionalServices(array(AdditionalService, AdditionalService))`
+
+
+Courier Shipment example (uses variables from above examples):
+```php
+use Mijora\Itella\Shipment\Shipment;
+use Mijora\Itella\ItellaException;
+
+try {
+  $shipment = new Shipment($p_user, $p_secret);
+  $shipment
+    ->setProductCode(Shipment::PRODUCT_COURIER) // product code, should always be set first
+    ->setShipmentNumber('Test_ORDER')           // shipment number, Order ID is good here
+    ->setSenderParty($sender)                   // Register Sender
+    ->setReceiverParty($receiver)               // Register Receiver
+    ->addAdditionalServices(                    // Register additional services
+      array($service_fragile, $service_cod)
+    )
+    ->addGoodsItems(                            // Register GoodsItem
+      array($item)
+    )
+  ;
+} catch (ItellaException $e) {
+  // Handle validation exceptions here
+}
+```
+
+Pickup point Shipment example (uses variables from above examples):
+```php
+use Mijora\Itella\Shipment\Shipment;
+use Mijora\Itella\ItellaException;
+
+$user = 'API_USER';     // API user
+$secret = 'API_SECRET'; // API secret / password
+
+try {
+  $shipment = new Shipment($user, $secret);
+  $shipment
+    ->setProductCode(Shipment::PRODUCT_PICKUP)  // product code, should always be set first
+    ->setShipmentNumber('Test_ORDER')           // shipment number, Order ID is good here
+    ->setSenderParty($sender)                   // Register Sender
+    ->setReceiverParty($receiver)               // Register Receiver
+    ->setPickupPoint('16443')                   // Register pickup point ID
+    ->addGoodsItem($item)                       // Register GoodsItem
+  ;
+} catch (ItellaException $e) {
+  // Handle validation exceptions here
+}
+```
+
+Once all information is supplied - shipment can be registered.
+If registration is successfull, tracking number will be returned.
+In this example returned tracking number is displayed, normaly it would be saved to order for later use to request shipment label PDF.
+```php
+try {
+  $tracking_number = $shipment->sendShipment();
+  echo "Shipment registered:\n <code>" . $tracking_number . "</code>\n";
+} catch (ItellaException $e) {
+  // Handle validation exceptions here
+}
+```
+
+If there is need to check request XML it can be done using `asXML()`
+```php
+try {
+  $xml = $shipment->asXML();
+  file_put_contents('request.xml', $xml);
+} catch (ItellaException $e) {
+  // Handle validation exceptions here
+}
+```
+
+## Printing Label
+---
+It is advised to always download label when it is needed. For that Shipment class is used.
+result will be base64 encoded pdf file. If multiple tracking numbers (in array) is passed pdf will contain all those labels.
+```php
+use Mijora\Itella\Shipment\Shipment;
+use Mijora\Itella\ItellaException;
+
+$user = 'API_USER';     // API user
+$secret = 'API_SECRET'; // API secret / password
+
+$track = 'JJFI12345600000000001';
+// or if need multiple in one pdf
+// $track = ['JJFI12345600000000001', 'JJFI12345600000000010'];
+
+try {
+  $shipment = new Shipment($user, $secret);
+  $pdf_base64 = $shipment->downloadLabels($track);
+  $pdf = base64_decode($pdf_base64);
+  if ($pdf) { // check if its not empty
+    if (is_array($track)) {
+      $track = 'labels';
+    }
+    $path = $track . '.pdf';
+    $is_saved = file_put_contents($path, $pdf);
+    $filename = 'labels.pdf';
+    if (!$is_saved) { // make sure it was saved
+      throw new ItellaException("Failed to save label pdf to: " . $path);
+    }
+
+    // make sure there is nothing before headers
+    if (ob_get_level()) ob_end_clean();
+    header("Content-Type: application/pdf; name=\"{$filename}\"");
+    header("Content-Transfer-Encoding: binary");
+    // disable caching on client and proxies, if the download content vary
+    header("Expires: 0");
+    header("Cache-Control: no-cache, must-revalidate");
+    header("Pragma: no-cache");
+    readfile($path);
+  } else {
+    throw new ItellaException("Downloaded label data is empty.");
+  }
+} catch (ItellaException $e) {
+  echo "Exception: <br>\n" . $e->getMessage() . "<br>\n";
+}
+```
+Above example checks that response isnt empty (if tracking number is wrong it still returns empty response), saves to file and loads into browser.
+
+
+## Locations API
+---
+When using Pickup Point option it is important to have correct list of pickup points. Also when creating Shipment to send to pickup point it will require that pickup point ID.
+```php
+use Mijora\Itella\Locations\PickupPoints;
+
+$pickup = new PickupPoints('https://locationservice.posti.com/api/2/location');
 // it is advised to download locations for each country separately
 // this will return filtered pickup points list as array
-$itellaLoc = $itellaPickupPointsObj->getLocationsByCountry('LT');
+$itella_loc = $pickup->getLocationsByCountry('LT');
 // now points can be stored into file or database for future use
-$itellaPickupPointsObj->saveLocationsToJSONFile('test.json', json_encode($itellaLoc));
+$pickup->saveLocationsToJSONFile('itella_locations_lt.json', json_encode($itella_oc));
 ```
-
-
-### Printing Label
----
-Labels generated using Shipment class object, for that reasong Shipment object must be created beforehand.
-Label printing has no validations and assumes al the supplied information is correct.
-```php
-$label = new \Mijora\Itella\Pdf\Label($shipment);
-$done = $label->printLabel($fileName, $path);
-```
-$fileName - is mandatory ex. 'sample.pdf'
-$path - optional, path to where save file (must end with /)
-in case $path is not supplied (null) pdf will be displayed in browser, otherwise saved to file at $path (in this case $done will be true).

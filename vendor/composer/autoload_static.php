@@ -11,6 +11,10 @@ class ComposerStaticIniteb694a5ce30c38b2e7cf8e65f539539e
         array (
             'setasign\\Fpdi\\' => 14,
         ),
+        'P' => 
+        array (
+            'Pakettikauppa\\' => 14,
+        ),
         'M' => 
         array (
             'Mijora\\Itella\\' => 14,
@@ -21,6 +25,10 @@ class ComposerStaticIniteb694a5ce30c38b2e7cf8e65f539539e
         'setasign\\Fpdi\\' => 
         array (
             0 => __DIR__ . '/..' . '/setasign/fpdi/src',
+        ),
+        'Pakettikauppa\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/pakettikauppa/api-library/src/Pakettikauppa',
         ),
         'Mijora\\Itella\\' => 
         array (

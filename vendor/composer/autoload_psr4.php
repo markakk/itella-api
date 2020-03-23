@@ -7,5 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'setasign\\Fpdi\\' => array($vendorDir . '/setasign/fpdi/src'),
+    'Pakettikauppa\\' => array($vendorDir . '/pakettikauppa/api-library/src/Pakettikauppa'),
     'Mijora\\Itella\\' => array($baseDir . '/src'),
 );

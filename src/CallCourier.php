@@ -1,7 +1,8 @@
 <?php
-
+// TODO: To be decided if library should handle this or not as pakettikauppa does not have this functionality at the moment
 namespace Mijora\Itella;
 
+use Mijora\Itella\ItellaException;
 class CallCourier
 {
   private $itella_email;
@@ -44,13 +45,13 @@ class CallCourier
     $headers .= rtrim(chunk_split(base64_encode($this->buildMailBody())));
     // Send mail with custom headers
     if (!mail($this->itella_email, $subject, '', $headers)) {
-      throw new \Exception('Oops, something gone wrong!');
+      throw new ItellaException('Oops, something gone wrong!');
     }
 
     return true;
   }
 
-  protected function buildMailBody()
+  public function buildMailBody()
   {
     $body =
       ($this->isTest ? "TEST CALL\r\n\r\n" : "") .

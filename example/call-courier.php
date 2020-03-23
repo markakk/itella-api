@@ -1,5 +1,5 @@
 <?php
-
+// TODO: TBD. Debends on pakettikauppa
 require '../vendor/autoload.php';
 
 use \Mijora\Itella\CallCourier;
@@ -20,10 +20,11 @@ try {
       'pickup_time' => '8:00 - 17:00',
       'contact_phone' => '865465411',
     ))
-    ->callCourier();
+    ->buildMailBody();
+    //->callCourier();
   if ($result) {
-    echo 'Email sent to: ' . $sendTo;
+    echo 'Email sent to: <br>' . $result;
   }
-} catch (\Throwable $th) {
-  echo 'Failed to send email, reason: ' . $th->getMessage();
+} catch (\Exception $e) {
+  echo 'Failed to send email, reason: ' . $e->getMessage();
 }

@@ -4,30 +4,81 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9bf706a4dc8341e3e86cf5e12214ae11",
+    "content-hash": "07175f27bc79d131c1256609890b7f17",
     "packages": [
         {
-            "name": "setasign/fpdi",
-            "version": "v2.2.0",
+            "name": "pakettikauppa/api-library",
+            "version": "2.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Setasign/FPDI.git",
-                "reference": "3c266002f8044f61b17329f7cd702d44d73f0f7f"
+                "url": "https://github.com/Pakettikauppa/api-library.git",
+                "reference": "9369035ef448e8e59da03df5f8e116eb30cba894"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Setasign/FPDI/zipball/3c266002f8044f61b17329f7cd702d44d73f0f7f",
-                "reference": "3c266002f8044f61b17329f7cd702d44d73f0f7f",
+                "url": "https://api.github.com/repos/Pakettikauppa/api-library/zipball/9369035ef448e8e59da03df5f8e116eb30cba894",
+                "reference": "9369035ef448e8e59da03df5f8e116eb30cba894",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-simplexml": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pakettikauppa\\": "src/Pakettikauppa"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matti Särkikoski",
+                    "email": "matti@pakettikauppa.fi"
+                }
+            ],
+            "description": "Pakettikauppa API implementation",
+            "homepage": "https://www.pakettikauppa.fi",
+            "keywords": [
+                "DB Schenker",
+                "Pakettikauppa",
+                "Smartship",
+                "api",
+                "matkahuolto",
+                "posti",
+                "smartpost"
+            ],
+            "time": "2020-03-03T13:34:40+00:00"
+        },
+        {
+            "name": "setasign/fpdi",
+            "version": "v2.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Setasign/FPDI.git",
+                "reference": "f58e64e51f61922d4c3ba4c6c91366ac520cb442"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Setasign/FPDI/zipball/f58e64e51f61922d4c3ba4c6c91366ac520cb442",
+                "reference": "f58e64e51f61922d4c3ba4c6c91366ac520cb442",
                 "shasum": ""
             },
             "require": {
                 "ext-zlib": "*",
                 "php": "^5.6 || ^7.0"
             },
+            "conflict": {
+                "setasign/tfpdf": "<1.31"
+            },
             "require-dev": {
                 "phpunit/phpunit": "~5.7",
                 "setasign/fpdf": "~1.8",
-                "setasign/tfpdf": "1.25",
+                "setasign/tfpdf": "1.31",
                 "tecnickcom/tcpdf": "~6.2"
             },
             "suggest": {
@@ -65,59 +116,20 @@
                 "fpdi",
                 "pdf"
             ],
-            "time": "2019-01-30T14:11:19+00:00"
-        },
-        {
-            "name": "setasign/fpdi-tcpdf",
-            "version": "v2.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Setasign/FPDI-TCPDF.git",
-                "reference": "95778baea02e5da76acb9f6dc1c946be380a22d8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Setasign/FPDI-TCPDF/zipball/95778baea02e5da76acb9f6dc1c946be380a22d8",
-                "reference": "95778baea02e5da76acb9f6dc1c946be380a22d8",
-                "shasum": ""
-            },
-            "require": {
-                "setasign/fpdi": "^2.2",
-                "tecnickcom/tcpdf": "^6.2"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jan Slabon",
-                    "email": "jan.slabon@setasign.com",
-                    "homepage": "https://www.setasign.com"
-                }
-            ],
-            "description": "Kind of metadata package for dependencies of the latest versions of FPDI and TCPDF.",
-            "homepage": "https://www.setasign.com/fpdi",
-            "keywords": [
-                "TCPDF",
-                "fpdi",
-                "pdf"
-            ],
-            "time": "2019-01-30T14:39:33+00:00"
+            "time": "2020-03-10T15:28:15+00:00"
         },
         {
             "name": "tecnickcom/tcpdf",
-            "version": "6.3.2",
+            "version": "6.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tecnickcom/TCPDF.git",
-                "reference": "9fde7bb9b404b945e7ea88fb7eccd23d9a4e324b"
+                "reference": "19a535eaa7fb1c1cac499109deeb1a7a201b4549"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/9fde7bb9b404b945e7ea88fb7eccd23d9a4e324b",
-                "reference": "9fde7bb9b404b945e7ea88fb7eccd23d9a4e324b",
+                "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/19a535eaa7fb1c1cac499109deeb1a7a201b4549",
+                "reference": "19a535eaa7fb1c1cac499109deeb1a7a201b4549",
                 "shasum": ""
             },
             "require": {
@@ -146,7 +158,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "LGPL-3.0"
+                "LGPL-3.0-only"
             ],
             "authors": [
                 {
@@ -166,7 +178,7 @@
                 "pdf417",
                 "qrcode"
             ],
-            "time": "2019-09-20T09:35:01+00:00"
+            "time": "2020-02-14T14:20:12+00:00"
         }
     ],
     "packages-dev": [],
