@@ -264,147 +264,6 @@ class Shipment
   }
 
   /**
-   * Main functions
-   */
-  // public function sendShipment_old()
-  // {
-  //   // production url
-  //   $url = 'https://connect.posti.fi/transportation/v1/orders';
-  //   // test url
-  //   if ($this->isTest) {
-  //     $url = 'https://connect.ja.posti.fi/kasipallo/transportation/v1/orders';
-  //   }
-
-  //   // check if authentication still valid and get new one if needed
-  //   if (!$this->auth->isValid()) {
-  //     $this->auth->getAuth();
-  //   }
-
-  //   $headers = array();
-  //   $headers[] = 'Expect:';
-  //   $headers[] = 'Content-type: text/xml; charset=utf-8';
-  //   $headers[] = 'Authorization: Bearer ' . $this->auth->getToken();
-  //   $post_data = $this->getXML()->asXML();
-
-  //   $options = array(
-  //     CURLOPT_POST            =>  1,
-  //     CURLOPT_HEADER          =>  0,
-  //     CURLOPT_URL             =>  $url,
-  //     CURLOPT_FRESH_CONNECT   =>  1,
-  //     CURLOPT_RETURNTRANSFER  =>  1,
-  //     CURLOPT_FORBID_REUSE    =>  1,
-  //     CURLOPT_USERAGENT       =>  'ItellaShipping-API/1.0',
-  //     CURLOPT_TIMEOUT         =>  30,
-  //     CURLOPT_HTTPHEADER      =>  $headers,
-  //     CURLOPT_POSTFIELDS      =>  $post_data
-  //   );
-
-  //   $curl = curl_init();
-  //   curl_setopt_array($curl, $options);
-  //   $response = curl_exec($curl);
-
-  //   // file_put_contents('transfer.log', '=======================', FILE_APPEND);
-  //   // file_put_contents('transfer.log', $post_data, FILE_APPEND);
-  //   // file_put_contents('transfer.log', '==== Response ====', FILE_APPEND);
-  //   // file_put_contents('transfer.log', $response, FILE_APPEND);
-  //   // file_put_contents('transfer.log', '=======================', FILE_APPEND);
-
-  //   $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-  //   // in case of errors return array with [error, error_description]
-  //   if ($http_code != 200) {
-  //     //echo $http_code;
-  //     if ($xml = @simplexml_load_string($response)) {
-  //       return array('error' => $xml->result, 'error_description' => $xml->resultMessage);
-  //     }
-
-  //     $response = json_decode($response, true);
-  //     return $response;
-  //   }
-
-  //   curl_close($curl);
-  //   // good response is in xml
-  //   if ($xml = @simplexml_load_string($response)) {
-  //     $response = array('success' => $xml->result, 'success_description' => $xml->resultMessage);
-  //   }
-  //   return $response;
-  // }
-
-  // public function validateCOD()
-  // {
-  //   if (!$this->isCod) {
-  //     return true;
-  //   }
-
-  //   if (empty($this->codBIC)) {
-  //     throw new \Exception("Missing COD BIC.", 3101);
-  //   }
-  //   if (empty($this->codIBAN)) {
-  //     throw new \Exception("Missing COD IBAN.", 3101);
-  //   }
-  //   if (empty($this->codValue)) {
-  //     throw new \Exception("Missing COD value.", 3101);
-  //   }
-  //   if (empty($this->codReference)) {
-  //     throw new \Exception("Missing COD reference.", 3101);
-  //   }
-
-  //   return true;
-  // }
-
-  // public function getXML()
-  // {
-  //   //check if total items limit
-  //   if ($this->totalItems > self::MULTIPARCEL_LIMIT) {
-  //     throw new \Exception("MultiParcel support up to " . self::MULTIPARCEL_LIMIT . ", found " . $this->totalItems, 3102);
-  //   }
-  //   // validate cod fields
-  //   $this->validateCOD();
-
-  //   $xml = new SimpleXMLElement('<Postra xmlns="http://api.posti.fi/xml/POSTRA/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://api.posti.fi/xml/POSTRA/1 POSTRA.xsd"/>');
-  //   // header XML
-  //   $header = $xml->addChild('Header');
-  //   $header->addChild('SenderId', $this->senderId);
-  //   $header->addChild('ReceiverId', $this->receiverId);
-  //   $header->addChild('DocumentDateTime', $this->documentDateTime);
-  //   $header->addChild('Sequence', $this->sequence);
-  //   $header->addChild('MessageCode', 'POSTRA');
-  //   $header->addChild('MessageVersion', 1);
-  //   $header->addChild('MessageRelease', 1);
-
-  //   if ($this->isTest)
-  //     $header->addChild('TestIndicator', 1);
-
-  //   $header->addChild('MessageAction', 'PARCEL_ORDER');
-
-  //   // shipment XML
-  //   $shipment = $xml->addChild('Shipments')->addChild('Shipment');
-  //   $shipment->addChild('MessageFunctionCode', 'ORIGINAL');
-  //   $shipment->addChild('ShipmentNumber', $this->shipmentNumber);
-  //   $shipment->addChild('ShipmentDateTime', $this->shipmentDateTime);
-
-  //   // COD XML
-  //   if ($this->isCod) {
-  //     $shipment->addChild('CodBIC', $this->codBIC);
-  //     $shipment->addChild('CodIBAN', $this->codIBAN);
-  //     $shipment->addChild('CodValue', $this->codValue)->addAttribute('currencyCode', 'EUR');
-  //     $shipment->addChild('CodReference', $this->codReference);
-  //   }
-
-  //   // Parties XML
-  //   $parties = $shipment->addChild('Parties');
-  //   $this->senderParty->getXML($parties);
-  //   $this->receiverParty->getXML($parties);
-
-  //   // GoodsItems XML
-  //   $goods = $shipment->addChild('GoodsItems');
-  //   foreach ($this->goodsItems as $goodsItem) {
-  //     $goodsItem->getXML($goods);
-  //   }
-
-  //   return $xml;
-  // }
-
-  /**
    * Getters
    */
   public function getDocumentDateTime()
@@ -438,6 +297,11 @@ class Shipment
 
   /**
    * Setters (returns this object for chainability)
+   */
+
+  /**
+   * Set shipment pickup point by pupCode from Locations API
+   * @var string $pickup_point_id pupCode of pickup point
    */
   public function setPickupPoint($pickup_point_id)
   {
