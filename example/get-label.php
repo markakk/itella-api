@@ -15,14 +15,14 @@ $track = $sample_track_nr;
 // $track = $sample_track_nr_array;
 
 try {
-  $shipment = new Shipment($user, $secret);
+  $shipment = new Shipment($p_user, $p_secret);
   $pdf_base64 = $shipment->downloadLabels($track);
   $pdf = base64_decode($pdf_base64);
   if ($pdf) { // check if its not empty
     if (is_array($track)) {
       $track = 'labels';
     }
-    $path = $track . '.pdf';
+    $path = dirname(__FILE__) . '/../temp' . $track . '.pdf';
     $is_saved = file_put_contents($path, $pdf);
     $filename = 'labels.pdf';
     if (!$is_saved) { // make sure it was saved

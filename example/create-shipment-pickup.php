@@ -32,12 +32,13 @@ try {
   $receiver
     ->setName1('Testas Testutis')
     ->setStreet1("latvia str. 6")
-    ->setPostCode("0011")
-    ->setCity("riga")
-    ->setCountryCode('lv')
+    ->setPostCode("10011")
+    ->setCity("vilnius")
+    ->setCountryCode('lt')
     ->setContactName('Mike')
-    ->setContactMobile('25841345')
-    ->setContactEmail('receiver@test.lv');
+    ->setContactMobile('865841345')
+    ->setContactEmail('receiver@test.lt')
+    ;
 
   // Create GoodsItem (parcel)
   $item = new GoodsItem();
@@ -53,7 +54,7 @@ try {
     //->setShipmentDateTime(date('c')) // when package will be ready (just use current time)
     ->setSenderParty($sender) // Sender class object
     ->setReceiverParty($receiver) // Receiver class object
-    ->setPickupPoint('16443')
+    ->setPickupPoint("621353201")
     ->addGoodsItem($item) // GoodsItem class object (or in case of multiparcel can be array of GoodsItem)
   ;
 

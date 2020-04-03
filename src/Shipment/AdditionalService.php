@@ -24,6 +24,7 @@ class AdditionalService
   const CALL_BEFORE_DELIVERY = 3166;
   const OVERSIZED = 3174;
   const PICKUP_POINT = 3201;
+  //const PICKUP_POINT = 2106; // pakettikauppa pickup point service
 
   private $valid_code = array(
     self::COD, self::MULTI_PARCEL, self::FRAGILE,

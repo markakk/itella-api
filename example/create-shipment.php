@@ -33,12 +33,13 @@ try {
     ->setName1('Mike Test')
     //->setName2("c/o Banginis, Pramones pr. 6B")
     ->setStreet1("latvia str. 6")
-    ->setPostCode("0011")
+    ->setPostCode("LV-0011")
     ->setCity("riga")
     ->setCountryCode('lv')
     //->setContactName('Mike')
     ->setContactMobile('25841345')
-    ->setContactEmail('receiver@test.lv');
+    //->setContactEmail('receiver@test.lv')
+    ;
 
   // Create GoodsItem (parcel)
   $item = new GoodsItem();
