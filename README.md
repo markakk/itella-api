@@ -70,7 +70,7 @@ try {
     ->setCity('Kaunas')                     // receiver city
     ->setCountryCode('LT')                  // receiver country code in ISO 3166-1 alpha-2 format (two letter code)
     ->setContactMobile('+37067654321')      // receiver phone number in international format
-    ->setContactEmail('receiver@test.lt');  // optional, receiver email
+    ->setContactEmail('receiver@test.lt');  // receiver email
 } catch (ItellaException $e) {
   // Handle validation exceptions here
 }
@@ -116,9 +116,9 @@ try {
 
 **Shipment::PRODUCT_PICKUP** available additional services:
 - Will be set automatically
-  - 3201 - Pickup Point, is set automatically when pick up point ID is registered into Shipment.
+  - 3201 - Pickup Point, is set automatically when pick up point ID (pupCode from Locations API) is registered into Shipment.
     **Requires** array with this information:
-      - `pickup_point_id` => Pickup point ID.
+      - `pickup_point_id` => Pickup point pupCode.
 
 Trying to set additional service that is not available for set product code will throw ItellaException.
 
@@ -216,7 +216,7 @@ try {
     ->setShipmentNumber('Test_ORDER')           // shipment number, Order ID is good here
     ->setSenderParty($sender)                   // Register Sender
     ->setReceiverParty($receiver)               // Register Receiver
-    ->setPickupPoint('16443')                   // Register pickup point ID
+    ->setPickupPoint('071503201')               // Register pickup point pupCode
     ->addGoodsItem($item)                       // Register GoodsItem
   ;
 } catch (ItellaException $e) {
