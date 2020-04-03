@@ -23,8 +23,8 @@ class AdditionalService
   const FRAGILE = 3104;
   const CALL_BEFORE_DELIVERY = 3166;
   const OVERSIZED = 3174;
-  const PICKUP_POINT = 3201;
-  //const PICKUP_POINT = 2106; // pakettikauppa pickup point service
+  //const PICKUP_POINT = 3201;
+  const PICKUP_POINT = 2106; // pakettikauppa pickup point service
 
   private $valid_code = array(
     self::COD, self::MULTI_PARCEL, self::FRAGILE,

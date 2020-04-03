@@ -98,7 +98,7 @@ class GoodsItem
 
   public function setGrossWeight($grossWeight)
   {
-    if (!filter_var($grossWeight, FILTER_VALIDATE_FLOAT)) {
+    if (filter_var($grossWeight, FILTER_VALIDATE_FLOAT) === false) {
       throw new ItellaException("Invalid grossWeight");
     }
     $this->grossWeight = $grossWeight;
@@ -107,7 +107,7 @@ class GoodsItem
 
   public function setVolume($volume)
   {
-    if (!filter_var($volume, FILTER_VALIDATE_FLOAT)) {
+    if (filter_var($volume, FILTER_VALIDATE_FLOAT) === false) {
       throw new ItellaException("Invalid volume");
     }
     $this->volume = $volume;
