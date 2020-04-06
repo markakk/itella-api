@@ -2,9 +2,7 @@
 // TODO: write docs
 require '../vendor/autoload.php';
 
-use Mijora\Itella\Locations\PickupPoints;
-use Mijora\Itella\Shipment\GoodsItem;
-use Mijora\Itella\Shipment\Party;
+use Mijora\Itella\Pdf\Manifest;
 
 $items = array(
   array(
@@ -42,7 +40,7 @@ $translation = array(
   'name_lastname_signature' => 'vardas, pavardė, parašas',
 );
 
-$manifest = new \Mijora\Itella\Pdf\Manifest();
+$manifest = new Manifest();
 $manifest
   ->setStrings($translation)
   ->setSenderName('TEST Web Shop')

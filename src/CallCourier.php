@@ -7,6 +7,7 @@ class CallCourier
 {
   private $itella_email;
   private $sender_email;
+  private $attachment = false; // attachement
   private $isTest = false;
   private $pickupAddress = array(
     'sender' => '',
@@ -32,19 +33,36 @@ class CallCourier
     // Force PHP to use the UTF-8 charset
     header('Content-Type: text/html; charset=utf-8');
 
+    $uid = md5(uniqid(time()));
     // Define and Base64 encode the subject line
     $subject_text = ($this->isTest ? 'TEST CALL - ' : '') . $this->subject;
     $subject = '=?UTF-8?B?' . base64_encode($subject_text) . '?=';
 
-    // Add custom headers
-    $headers = 'Content-Type: text/plain; charset=utf-8' . "\r\n";
-    $headers .= 'Content-Transfer-Encoding: base64' . "\r\n";
-    $headers .= 'From: ' . $this->sender_email . "\r\n";
+    $eol = PHP_EOL;
 
-    // Base64 the email body text
-    $headers .= rtrim(chunk_split(base64_encode($this->buildMailBody())));
+    $headers = '';
+    $message = '';
+    // Add custom headers
+    $headers .= "From: " . $this->sender_email . "$eol";
+    $headers .= "MIME-Version: 1.0$eol";
+    $headers .= "Content-Type: multipart/mixed; boundary=\"$uid\"$eol";
+    $message .= "--" . $uid . "$eol";
+    $message .= "Content-Type: text/plain; charset=utf-8$eol";
+    $message .= "Content-Transfer-Encoding: base64" . $eol . $eol;
+    // Base64 the email message
+    $message .= rtrim(chunk_split(base64_encode($this->buildMailBody()))) . "$eol";
+    if ($this->attachment) {
+      $message .= "--" . $uid . "$eol";
+      $message .= "Content-Type: application/octet-stream; name=\"manifest.pdf\"$eol";
+      $message .= "Content-Transfer-Encoding: base64$eol";
+      $message .= "Content-Disposition: attachment; filename=\"manifest.pdf\"" . $eol . $eol;
+      $message .= rtrim(chunk_split($this->attachment)) . "$eol";
+    } else {
+      throw new ItellaException('No manifest attached to call courier');
+    }
+    $message .= "--" . $uid . "--";
     // Send mail with custom headers
-    if (!mail($this->itella_email, $subject, '', $headers)) {
+    if (!mail($this->itella_email, $subject, $message, $headers)) {
       throw new ItellaException('Oops, something gone wrong!');
     }
 
@@ -85,6 +103,12 @@ class CallCourier
   public function setSubject($subject)
   {
     $this->subject = $subject;
+    return $this;
+  }
+
+  public function setAttachment($attachment, $isBase64 = false)
+  {
+    $this->attachment = ($isBase64 ? $attachment : base64_encode($attachment));
     return $this;
   }
 }
