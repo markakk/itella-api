@@ -1,15 +1,15 @@
 <?php
 // TODO: TBD. Debends on pakettikauppa
+if (!file_exists('env.php')) {
+  copy('sample.env.php', 'env.php');
+}
+require('env.php');
+
 require '../vendor/autoload.php';
 
 use Mijora\Itella\CallCourier;
 use Mijora\Itella\ItellaException;
 use Mijora\Itella\Pdf\Manifest;
-
-if (!file_exists('env.php')) {
-  copy('sample.env.php', 'env.php');
-}
-require('env.php');
 
 /**
  * DEMO MANIFEST TO BE ATTACHED

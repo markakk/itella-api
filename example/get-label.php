@@ -1,18 +1,18 @@
 <?php
 // TODO: write docs
-require '../vendor/autoload.php';
-
-use Mijora\Itella\ItellaException;
-use \Mijora\Itella\Shipment\Shipment;
-
 if (!file_exists('env.php')) {
   copy('sample.env.php', 'env.php');
 }
 require('env.php');
 
+require '../vendor/autoload.php';
+
+use Mijora\Itella\ItellaException;
+use \Mijora\Itella\Shipment\Shipment;
+
 $track = $sample_track_nr;
 // or if need multiple in one pdf
- $track = $sample_track_nr_array;
+// $track = $sample_track_nr_array;
 
 try {
   $shipment = new Shipment($p_user, $p_secret);

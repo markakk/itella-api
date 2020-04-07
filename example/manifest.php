@@ -1,5 +1,10 @@
 <?php
 // TODO: write docs
+if (!file_exists('env.php')) {
+  copy('sample.env.php', 'env.php');
+}
+require('env.php');
+
 require '../vendor/autoload.php';
 
 use Mijora\Itella\Pdf\Manifest;

@@ -35,6 +35,7 @@ try {
     }
   }
   /**
+   * Second param:
    * I: send the file inline to the browser (default).
    * D: send to the browser and force a file download with the name given by name.
    * F: save to a local server file with the name given by name.
