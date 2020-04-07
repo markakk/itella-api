@@ -12,7 +12,7 @@ require('env.php');
 
 $track = $sample_track_nr;
 // or if need multiple in one pdf
-// $track = $sample_track_nr_array;
+ $track = $sample_track_nr_array;
 
 try {
   $shipment = new Shipment($p_user, $p_secret);
@@ -22,7 +22,7 @@ try {
     if (is_array($track)) {
       $track = 'labels';
     }
-    $path = dirname(__FILE__) . '/../temp' . $track . '.pdf';
+    $path = dirname(__FILE__) . '/../temp/' . $track . '.pdf';
     $is_saved = file_put_contents($path, $pdf);
     $filename = 'labels.pdf';
     if (!$is_saved) { // make sure it was saved
