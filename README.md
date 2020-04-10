@@ -217,7 +217,7 @@ try {
     ->setSenderParty($sender)                   // Register Sender
     ->setReceiverParty($receiver)               // Register Receiver
     ->setPickupPoint('071503201')               // Register pickup point pupCode
-    ->addGoodsItem($item)                       // Register GoodsItem
+    ->addGoodsItem($item)                       // Register GoodsItem (this adds just one)
   ;
 } catch (ItellaException $e) {
   // Handle validation exceptions here
@@ -229,7 +229,7 @@ If registration is successfull, tracking number will be returned.
 In this example returned tracking number is displayed, normaly it would be saved to order for later use to request shipment label PDF.
 ```php
 try {
-  $tracking_number = $shipment->sendShipment();
+  $tracking_number = $shipment->registerShipment();
   echo "Shipment registered:\n <code>" . $tracking_number . "</code>\n";
 } catch (ItellaException $e) {
   // Handle validation exceptions here
@@ -249,7 +249,9 @@ try {
 ## Printing Label
 ---
 It is advised to always download label when it is needed. For that Shipment class is used.
-result will be base64 encoded pdf file. If multiple tracking numbers (in array) is passed pdf will contain all those labels.
+result will be base64 encoded pdf file. If multiple tracking numbers (in array) is passed pdf will contain all those labels. For getting and merging labels pdf from two different users please refer to `get-merge-labels.php` example
+
+**Important**: If tracking number is from different user it will be ignored.
 ```php
 use Mijora\Itella\Shipment\Shipment;
 use Mijora\Itella\ItellaException;
