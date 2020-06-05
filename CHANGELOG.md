@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.2.2] - Auth update
+### Updated
+- Posti authentication url for pakeetikauppa API
+- Updated dependencies
+- Cleaned up some unused code
+
 ## [2.2.1] - 2020-05-21
 ### Added
 - Finland mobile number validation
