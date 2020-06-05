@@ -1,4 +1,4 @@
-# Itella-API v2.2.1
+# Itella-API
 
 Its a wrapper library for Pakettikauppa API library.
 
