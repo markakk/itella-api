@@ -404,3 +404,53 @@ try {
   echo 'Failed to send email, reason: ' . $e->getMessage();
 }
 ```
+
+## Call Courier - in development
+---
+To call courrier manifest must be generated (works well with base64 encoded pdf). CallCourier is using mail() php function. That means - even if mail reports success on sending email, it is not guaranteed to be sent.
+```php
+use Mijora\Itella\CallCourier;
+use Mijora\Itella\ItellaException;
+use Mijora\Itella\Pdf\Manifest;
+
+$manifest = new Manifest();
+$manifest_string = $manifest
+  /*
+  See previous examples on how to create manifest, here only show last couple settings to get base64 string
+  */
+  ->setToString(true)
+  ->setBase64(true)
+  ->printManifest('manifest.pdf')
+;
+
+$items = array( // selected orders array
+  array(
+    'tracking_number' => 'JJFItestnr00000000015',
+    'weight' => 1,
+    'amount' => 1,
+    'delivery_address' => 'Test Tester, Example str. 6, 44320 City, LT',
+  ),
+);
+
+$sendTo = 'test@test.com'; // email to send courier call to
+try {
+  $caller = new CallCourier($sendTo);
+  $result = $caller
+    ->setSenderEmail('shop@shop.lt') // sender email
+    ->setSubject('E-com order booking') // currently it must be 'E-com order booking'
+    ->setPickUpAddress(array( // strings to show in email message
+      'sender' => 'Name / Company name',
+      'address' => 'Street, Postcode City, Country',
+      'contact_phone' => '860000000',
+    ))
+    ->setAttachment($manifest_string, true) // attachment is previously generated manifest, true - means we are passing base64 encoded string
+    ->setItems($items) // add orders
+    ->callCourier() // send email
+  ;
+  if ($result) {
+    echo 'Email sent to: <br>' . $sendTo;
+  }
+} catch (ItellaException $e) { // catch if something goes wrong
+  echo 'Failed to send email, reason: ' . $e->getMessage();
+}
+```
