@@ -18,6 +18,7 @@ class CallCourier
     'contact_phone' => '',
   );
   private $subject = 'Call Itella Courier';
+  private $items = array();
   private $itemElem = array(
     'tracking_number' => '',
     'weight' => '0.00',
