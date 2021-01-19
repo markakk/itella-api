@@ -19,12 +19,6 @@ class CallCourier
   );
   private $subject = 'Call Itella Courier';
   private $items = array();
-  private $itemElem = array(
-    'tracking_number' => '',
-    'weight' => '0.00',
-    'amount' => '1',
-    'delivery_address' => '',
-  );
 
   public function __construct($itella_email, $isTest = false)
   {
@@ -167,11 +161,13 @@ class CallCourier
   }
 
   /**
-   * $item = array(
-   *  'tracking_number' => '01234567890123456789',
-   *  'weight' => '1.0',
-   *  'amount' => '1',
-   *  'delivery_address' => 'Name / Company name. Street, Postcode City, Country',
+   * $items = array(
+   *  array(
+   *    'tracking_number' => '01234567890123456789',
+   *    'weight' => '1.0',
+   *    'amount' => '1',
+   *    'delivery_address' => 'Name / Company name. Street, Postcode City, Country',
+   *  ),
    * );
    */
   public function setItems($items = [])
