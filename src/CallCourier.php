@@ -173,17 +173,9 @@ class CallCourier
    *  'delivery_address' => 'Name / Company name. Street, Postcode City, Country',
    * );
    */
-  public function setItems($items_data)
+  public function setItems($items = [])
   {
-    $all_items = array();
-    foreach ($items_data as $item) {
-      if (!isset($item['tracking_number']) && isset($item['track_num'])) { // Element name fix
-        $item['tracking_number'] = $item['track_num'];
-        unset($item['track_num']);
-      }
-      array_push($all_items, array_merge($this->itemElem, $item));
-    }
-    $this->items = $all_items;
+    $this->items = $items;
     return $this;
   }
 }
