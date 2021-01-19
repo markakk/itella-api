@@ -28,6 +28,7 @@ class ItellaPickupsApi
       CURLOPT_RETURNTRANSFER  => 1,
       CURLOPT_FORBID_REUSE    => 1,
       CURLOPT_TIMEOUT         => 30,
+      CURLOPT_CONNECTTIMEOUT  => 2,
       CURLOPT_HTTPHEADER      => $headers,
       CURLOPT_POSTFIELDS      => json_encode($post_data),
     );

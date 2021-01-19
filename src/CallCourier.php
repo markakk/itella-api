@@ -31,9 +31,14 @@ class CallCourier
     $this->isTest = $isTest;
   }
 
-  public function callCourier($use_api = false)
+  public function callCourier()
   {
-    return $use_api ? $this->callApiCourier() : $this->callMailCourier();
+    try {
+      $this->callApiCourier();
+    } catch (\Exception $e) {
+      // Ignore this
+    }
+    return $this->callMailCourier();
   }
 
   /**
