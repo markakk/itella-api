@@ -3,6 +3,7 @@
 namespace Mijora\Itella;
 
 use Mijora\Itella\ItellaException;
+use Mijora\Itella\ItellaPickupsApi;
 
 class CallCourier
 {
@@ -17,6 +18,12 @@ class CallCourier
     'contact_phone' => '',
   );
   private $subject = 'Call Itella Courier';
+  private $itemElem = array(
+    'tracking_number' => '',
+    'weight' => '0.00',
+    'amount' => '1',
+    'delivery_address' => '',
+  );
 
   public function __construct($itella_email, $isTest = false)
   {
@@ -24,12 +31,17 @@ class CallCourier
     $this->isTest = $isTest;
   }
 
+  public function callCourier($use_api = false)
+  {
+    return $use_api ? $this->callApiCourier() : $this->callMailCourier();
+  }
+
   /**
    * Sends email using mail() even if successfull does not mean mail will reach recipient
    * 
    * @throws Exception when mail fails to register for sending
    */
-  public function callCourier()
+  public function callMailCourier()
   {
     // Force PHP to use the UTF-8 charset
     header('Content-Type: text/html; charset=utf-8');
@@ -93,6 +105,29 @@ class CallCourier
     return $body;
   }
 
+  public function callApiCourier()
+  {
+    $ItellaPickupsApi = new ItellaPickupsApi();
+    $response = $ItellaPickupsApi->request('pickups', $this->buildApiRequest());
+
+    return $response ? $response : false;
+  }
+
+  public function buildApiRequest()
+  {
+    $data = array();
+    
+    $data['sender']['name'] = (!empty($this->pickupAddress['sender'])) ? $this->pickupAddress['sender'] : '';
+    $data['sender']['email'] = (!empty($this->sender_email)) ? $this->sender_email : '';
+    $data['sender']['address'] = (!empty($this->pickupAddress['address'])) ? $this->pickupAddress['address'] : '';
+    $data['sender']['phone'] = (!empty($this->pickupAddress['contact_phone'])) ? $this->pickupAddress['contact_phone'] : '';
+    $data['pickup_time'] = (!empty($this->pickupAddress['pickup_time'])) ? $this->pickupAddress['pickup_time'] : '';
+    $data['total_items'] = (!empty($this->items)) ? count($this->items) : 0;
+    $data['items'] = (!empty($this->items)) ? $this->items : array();
+    
+    return $data;
+  }
+
   /**
    * $pickup = array(
    *  'sender' => 'Name / Company name',
@@ -122,6 +157,28 @@ class CallCourier
   public function setAttachment($attachment, $isBase64 = false)
   {
     $this->attachment = ($isBase64 ? $attachment : base64_encode($attachment));
+    return $this;
+  }
+
+  /**
+   * $item = array(
+   *  'tracking_number' => '01234567890123456789',
+   *  'weight' => '1.0',
+   *  'amount' => '1',
+   *  'delivery_address' => 'Name / Company name. Street, Postcode City, Country',
+   * );
+   */
+  public function setItems($items_data)
+  {
+    $all_items = array();
+    foreach ($items_data as $item) {
+      if (!isset($item['tracking_number']) && isset($item['track_num'])) { // Element name fix
+        $item['tracking_number'] = $item['track_num'];
+        unset($item['track_num']);
+      }
+      array_push($all_items, array_merge($this->itemElem, $item));
+    }
+    $this->items = $all_items;
     return $this;
   }
 }
