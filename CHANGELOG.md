@@ -1,4 +1,9 @@
 # Changelog
+
+## [2.3.1] - Address splitting
+### Changed
+- divided sender address into different parameters
+
 ## [2.3.0] - ItellaPickups API
 ### Added
 - created ItellaPickups API
