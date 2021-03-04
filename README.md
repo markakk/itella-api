@@ -314,7 +314,7 @@ $pickup = new PickupPoints('https://locationservice.posti.com/api/2/location');
 // this will return filtered pickup points list as array
 $itella_loc = $pickup->getLocationsByCountry('LT');
 // now points can be stored into file or database for future use
-$pickup->saveLocationsToJSONFile('itella_locations_lt.json', json_encode($itella_oc));
+$pickup->saveLocationsToJSONFile('itella_locations_lt.json', json_encode($itella_loc));
 ```
 
 ## Manifest generating
