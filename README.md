@@ -2,6 +2,11 @@
 
 Its a wrapper library for Pakettikauppa API library.
 
+## Installing Itella-API using composer
+```
+composer require mijora/itella-api
+```
+
 ## Using Itella-API library
 - `__PATH_TO_LIB__` is path to where itella-api is placed. This will load Mijora\Itella namespace
 ```php
