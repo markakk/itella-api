@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased] - Label comment
+## [2.3.2] - Label comment
 ### Added
 - Added `setComment()` function to Shipment class. This sets a comment that will be displayed on label
 
