@@ -201,6 +201,7 @@ try {
     ->addGoodsItems(                            // Register GoodsItem
       array($item)
     )
+    ->setComment('Comment about shipment')      // Comment string
   ;
 } catch (ItellaException $e) {
   // Handle validation exceptions here
@@ -224,6 +225,7 @@ try {
     ->setReceiverParty($receiver)               // Register Receiver
     ->setPickupPoint('071503201')               // Register pickup point pupCode
     ->addGoodsItem($item)                       // Register GoodsItem (this adds just one)
+    ->setComment('Comment about shipment')      // Comment string
   ;
 } catch (ItellaException $e) {
   // Handle validation exceptions here
