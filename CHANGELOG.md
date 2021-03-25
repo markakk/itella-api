@@ -1,12 +1,15 @@
 # Changelog
 
-## [Unreleased] - 
+## [2.3.3] - FI pickupoints
 ### Changed
 - PickupPoints for country FI wont filter out type PICKUPPOINT
 
 ### Added
 - Function to disable phone fixing on Party class. Functions `disablePhoneCheck` and `enablePhoneCheck`.
 **NOTE:** Disabling phone checking still checks that phone format matches international.
+
+### Updated
+- setasign/fpdi updated to v2.3.6
 
 ## [2.3.2] - Label comment
 ### Added
