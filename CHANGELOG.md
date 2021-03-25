@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased] - 
+### Changed
+- PickupPoints for country FI wont filter out type PICKUPPOINT
+
+### Added
+- Function to disable phone fixing on Party class. Functions `disablePhoneCheck` and `enablePhoneCheck`.
+**NOTE:** Disabling phone checking still checks that phone format matches international.
+
 ## [2.3.2] - Label comment
 ### Added
 - Added `setComment()` function to Shipment class. This sets a comment that will be displayed on label
