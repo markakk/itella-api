@@ -82,6 +82,35 @@ try {
 }
 ```
 
+## Disabling phone checking / fixing
+---
+By default Party class checks that supplied phone matches set country format (if country is Lithuania it exxpects to see Lithuanian phone number) and tries to fix phone number to conform to international standart if needed.
+In case where such check / fixing is not desired (phone number is of different country than the one set) it can be disabled using disablePhoneCheck function on Party class. 
+
+**NOTE:** Even if checking / fixing is disabled Party class will still check that supplied number is in international format.
+
+Example:
+```php
+use Mijora\Itella\Shipment\Party;
+use Mijora\Itella\ItellaException;
+
+try {
+  $receiver = new Party(Party::ROLE_RECEIVER);
+  $receiver
+    ->setName1('Testas')
+    ->setStreet1('None str. 4')
+    ->setPostCode('47174')
+    ->setCity('Kaunas')
+    ->disablePhoneCheck()                   // disable phone checking / fixing
+    ->setCountryCode('LT')                  // country is set to Lithuania
+    ->setContactMobile('+37120000000')      // but phone number is Latvian
+    ->setContactEmail('receiver@test.lt');
+} catch (ItellaException $e) {
+  // Handle validation exceptions here
+}
+```
+Notice how country code is set as LT (Lithuania) while contact mobile number is Latvian.
+
 
 ## Creating Order Items
 ---
