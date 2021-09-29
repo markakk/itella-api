@@ -150,6 +150,13 @@ try {
 
 
 **Shipment::PRODUCT_PICKUP** available additional services:
+- Must be set manualy
+  - 3101 - Cash On Delivery (only by credit card). 
+    **Requires** array with this information:
+      - `amount`    => amount to be payed in EUR,
+      - `account`   => bank account (IBAN),
+      - `codbic`    => bank BIC, 
+      - `reference` => COD Reference, can be used `Helper::generateCODReference($id)` where `$id` can be Order ID.
 - Will be set automatically
   - 3201 - Pickup Point, is set automatically when pick up point ID (pupCode from Locations API) is registered into Shipment.
     **Requires** array with this information:
@@ -253,6 +260,7 @@ try {
     ->setSenderParty($sender)                   // Register Sender
     ->setReceiverParty($receiver)               // Register Receiver
     ->setPickupPoint('071503201')               // Register pickup point pupCode
+    ->addAdditionalService($service_cod)        // Register additional services
     ->addGoodsItem($item)                       // Register GoodsItem (this adds just one)
     ->setComment('Comment about shipment')      // Comment string
   ;
