@@ -1,7 +1,7 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => '2.3.4',
-        'version' => '2.3.4.0',
+        'pretty_version' => '2.3.5',
+        'version' => '2.3.5.0',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,8 +11,8 @@
     ),
     'versions' => array(
         'mijora/itella-api' => array(
-            'pretty_version' => '2.3.4',
-            'version' => '2.3.4.0',
+            'pretty_version' => '2.3.5',
+            'version' => '2.3.5.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -20,12 +20,12 @@
             'dev_requirement' => false,
         ),
         'pakettikauppa/api-library' => array(
-            'pretty_version' => '2.0.5',
-            'version' => '2.0.5.0',
+            'pretty_version' => '2.0.6',
+            'version' => '2.0.6.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../pakettikauppa/api-library',
             'aliases' => array(),
-            'reference' => '6ba538d45abac262b4a38eafb200104e76e0e264',
+            'reference' => '645ae33288d37c7001fd1e32041808ef01b40fb2',
             'dev_requirement' => false,
         ),
         'setasign/fpdi' => array(

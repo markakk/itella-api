@@ -16,7 +16,7 @@ $track = $sample_track_nr;
 
 try {
   $shipment = new Shipment($p_user, $p_secret);
-  $pdf_base64 = $shipment->downloadLabels($track);
+  $pdf_base64 = $shipment->downloadLabels($track, Shipment::LABEL_SIZE_A5);
   $pdf = base64_decode($pdf_base64);
   if ($pdf) { // check if its not empty
     if (is_array($track)) {
