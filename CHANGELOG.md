@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.3.7] - Logo & PDF lib
+### Updated
+- updated logo used for manifest
+- tecnickcom/tcpdf updated to 6.5.0
+
 ## [2.3.6] - Dependencies update
 ### Updated
 - pakettikauppa/api-library to v2.0.6
