@@ -4,6 +4,9 @@
 ### Removed
 - removed the Auth class as it is no longer used
 
+### Changed
+- moved location API url from class Shipment to class PickupPoints
+
 ## [2.3.7] - Logo & PDF lib
 ### Updated
 - updated logo used for manifest
