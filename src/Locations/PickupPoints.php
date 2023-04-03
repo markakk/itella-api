@@ -4,12 +4,14 @@ namespace Mijora\Itella\Locations;
 
 class PickupPoints
 {
-  private $api_url;
+  public $api_url = 'https://locationservice.posti.com/api/2/location';
   private $lang;
 
-  public function __construct($api_url, $lang = null)
+  public function __construct($api_url = false, $lang = null)
   {
-    $this->api_url = $api_url;
+    if ( ! empty($api_url) ) {
+      $this->api_url = $api_url;
+    }
     $this->lang = $lang;
   }
 
