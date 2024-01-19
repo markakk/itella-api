@@ -4,8 +4,9 @@ namespace Mijora\Itella\Locations;
 
 class PickupPoints
 {
-  public $api_url = 'https://locationservice.posti.com/api/2/location';
+  public $api_url = 'https://delivery.plugins.itella.com/api/locations';
   private $lang;
+  private $error_msg = '';
 
   public function __construct($api_url = false, $lang = null)
   {
@@ -64,12 +65,23 @@ class PickupPoints
     $url = $this->api_url . ($query ? '?' . $query : '');
 
     $result = CurlRequest::doCurlRequest($url);
+    if (isset($result['error'])) {
+      $this->error_msg = $result['error'];
+      return false;
+    }
+
     $locations = CurlRequest::getLocations($result, $this->lang);
 
     if (isset($locations['error'])) {
+      $this->error_msg = $locations['error'];
       return false;
     }
 
     return $locations;
+  }
+
+  public function getErrorMsg()
+  {
+    return $this->error_msg;
   }
 }
