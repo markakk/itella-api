@@ -10,6 +10,7 @@
 
 ### Added
 - added request error return
+- added support for Lithuanian phone number prefix "0"
 
 ## [2.3.7] - Logo & PDF lib
 ### Updated
