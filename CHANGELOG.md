@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.3.8] - Use Locations API v3
 ### Removed
 - removed the Auth class as it is no longer used
 

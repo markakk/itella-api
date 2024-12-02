@@ -7,18 +7,6 @@ namespace Composer\Autoload;
 class ComposerStaticIniteb694a5ce30c38b2e7cf8e65f539539e
 {
     public static $prefixLengthsPsr4 = array (
-        's' => 
-        array (
-            'setasign\\Fpdi\\' => 14,
-        ),
-        'T' => 
-        array (
-            'Tests\\Pakettikauppa\\' => 20,
-        ),
-        'P' => 
-        array (
-            'Pakettikauppa\\' => 14,
-        ),
         'M' => 
         array (
             'Mijora\\Itella\\' => 14,
@@ -26,18 +14,6 @@ class ComposerStaticIniteb694a5ce30c38b2e7cf8e65f539539e
     );
 
     public static $prefixDirsPsr4 = array (
-        'setasign\\Fpdi\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/setasign/fpdi/src',
-        ),
-        'Tests\\Pakettikauppa\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/pakettikauppa/api-library/src/Tests/Pakettikauppa',
-        ),
-        'Pakettikauppa\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/pakettikauppa/api-library/src/Pakettikauppa',
-        ),
         'Mijora\\Itella\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
@@ -46,20 +22,21 @@ class ComposerStaticIniteb694a5ce30c38b2e7cf8e65f539539e
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'Datamatrix' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/datamatrix.php',
-        'PDF417' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/pdf417.php',
-        'QRcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/qrcode.php',
-        'TCPDF' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf.php',
-        'TCPDF2DBarcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_barcodes_2d.php',
-        'TCPDFBarcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_barcodes_1d.php',
-        'TCPDF_COLORS' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_colors.php',
-        'TCPDF_FILTERS' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_filters.php',
-        'TCPDF_FONTS' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_fonts.php',
-        'TCPDF_FONT_DATA' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_font_data.php',
-        'TCPDF_IMAGES' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_images.php',
-        'TCPDF_IMPORT' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_import.php',
-        'TCPDF_PARSER' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_parser.php',
-        'TCPDF_STATIC' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_static.php',
+        'Mijora\\Itella\\CallCourier' => __DIR__ . '/../..' . '/src/CallCourier.php',
+        'Mijora\\Itella\\Helper' => __DIR__ . '/../..' . '/src/Helper.php',
+        'Mijora\\Itella\\ItellaException' => __DIR__ . '/../..' . '/src/ItellaException.php',
+        'Mijora\\Itella\\ItellaPickupsApi' => __DIR__ . '/../..' . '/src/ItellaPickupsApi.php',
+        'Mijora\\Itella\\Locations\\CurlRequest' => __DIR__ . '/../..' . '/src/Locations/CurlRequest.php',
+        'Mijora\\Itella\\Locations\\Output' => __DIR__ . '/../..' . '/src/Locations/Output.php',
+        'Mijora\\Itella\\Locations\\PickupPoints' => __DIR__ . '/../..' . '/src/Locations/PickupPoints.php',
+        'Mijora\\Itella\\Pdf\\Label' => __DIR__ . '/../..' . '/src/Pdf/Label.php',
+        'Mijora\\Itella\\Pdf\\Manifest' => __DIR__ . '/../..' . '/src/Pdf/Manifest.php',
+        'Mijora\\Itella\\Pdf\\PDFMerge' => __DIR__ . '/../..' . '/src/Pdf/PDFMerge.php',
+        'Mijora\\Itella\\Shipment\\AdditionalService' => __DIR__ . '/../..' . '/src/Shipment/AdditionalService.php',
+        'Mijora\\Itella\\Shipment\\GoodsItem' => __DIR__ . '/../..' . '/src/Shipment/GoodsItem.php',
+        'Mijora\\Itella\\Shipment\\Party' => __DIR__ . '/../..' . '/src/Shipment/Party.php',
+        'Mijora\\Itella\\Shipment\\Shipment' => __DIR__ . '/../..' . '/src/Shipment/Shipment.php',
+        'Mijora\\Itella\\SimpleXMLElement' => __DIR__ . '/../..' . '/src/SimpleXMLElement.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
