@@ -1,6 +1,9 @@
 # Changelog
 
 ## [2.3.9]
+### Fixed
+- fixed deprecated function message when generating manifest
+
 ### Changed
 - changed logo to Smartposti
 
