@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- fixed disablePhoneCheck() and enablePhoneCheck() functions in Shipment\Party class
+
 ## [2.3.9]
 ### Fixed
 - fixed deprecated function message when generating manifest
