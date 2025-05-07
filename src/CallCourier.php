@@ -101,7 +101,7 @@ class CallCourier
       throw new ItellaException('Oops, something gone wrong!');
     }
 
-    return true;
+    return 'The courier will arrive between ' . $this->pickupAddress['pickup_time'];
   }
 
   public function buildMailBody()
@@ -167,7 +167,7 @@ class CallCourier
     $data['sender']['phone'] = (!empty($this->pickupAddress['contact_phone'])) ? $this->pickupAddress['contact_phone'] : '';
     $data['pickup_time'] = (!empty($this->pickupAddress['pickup_time'])) ? $this->pickupAddress['pickup_time'] : '';
     $data['items'] = (!empty($this->items)) ? $this->items : array();
-    
+
     return $data;
   }
 
@@ -244,6 +244,9 @@ class CallCourier
   public function setPickUpAddress($pickupAddress)
   {
     $this->pickupAddress = array_merge($this->pickupAddress, $pickupAddress);
+    if (empty($this->pickupAddress['pickup_time'])) {
+      $this->pickupAddress['pickup_time'] = $this->pickupParams['time_from'] . ' - ' . $this->pickupParams['time_to'];
+    }
     return $this;
   }
 
