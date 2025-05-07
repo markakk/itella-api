@@ -3,6 +3,7 @@
 namespace Mijora\Itella;
 
 use Mijora\Itella\ItellaException;
+use Mijora\Itella\Client;
 use Mijora\Itella\ItellaPickupsApi;
 
 class CallCourier
@@ -20,6 +21,15 @@ class CallCourier
     'pickup_time' => '',
     'contact_phone' => '',
   );
+  private $pickupParams = array(
+    'date' => '',
+    'time_from' => '08:00',
+    'time_to' => '17:00',
+    'info_general' => '',
+    'id_sender' => '',
+    'id_customer' => '',
+    'id_invoice' => '',
+  );
   private $subject = 'Call Itella Courier';
   private $items = array();
   private $translates = array(
@@ -31,16 +41,17 @@ class CallCourier
     'mail_attachment' => 'See attachment for manifest PDF.',
   );
 
-  public function __construct($itella_email, $isTest = false)
+  public function __construct($itella_email = '', $isTest = false)
   {
     $this->itella_email = $itella_email;
     $this->isTest = $isTest;
   }
 
-  public function callCourier()
+  public function callCourier($user = '', $pass = '')
   {
     try {
-      $this->callApiCourier();
+      //$this->callApiCourier();
+      $this->callPostraCourier($user, $pass);
     } catch (\Exception $e) {
       // Ignore this
     }
@@ -128,6 +139,21 @@ class CallCourier
     return $response ? $response : false;
   }
 
+  public function callPostraCourier($user, $pass)
+  {
+    $url = 'https://connect.posti.fi/transportation/v1/';
+    if ($this->isTest) {
+      $url = 'https://connect.ja.posti.fi/kasipallo/transportation/v1/';
+    }
+
+    $client = new Client($user, $pass, $this->isTest);
+    $token = $client->getAccessToken();
+
+    $ItellaPickupsApi = new ItellaPickupsApi($url);
+    $ItellaPickupsApi->setToken($token);
+    return $ItellaPickupsApi->requestXml('orders', $this->buildPostraXml());
+  }
+
   public function buildApiRequest()
   {
     $data = array();
@@ -145,6 +171,65 @@ class CallCourier
     return $data;
   }
 
+  private function buildPostraXml()
+  {
+    $date = $this->getPickupParamsValue('date', date('Y-m-d', strtotime('+1 day')));
+
+    $xml = new \SimpleXMLElement('<Postra/>');
+    $xml->addAttribute('xmlns', 'http://api.posti.fi/xml/POSTRA/1');
+
+    $header = $xml->addChild('Header');
+    $header->addChild('SenderId', $this->getPickupParamsValue('id_sender'));
+    $header->addChild('ReceiverId', '003715318644');
+    $header->addChild('DocumentDateTime', gmdate('c'));
+    $header->addChild('Sequence', floor(microtime(true) * 1000));
+    $header->addChild('MessageCode', 'POSTRA');
+    $header->addChild('MessageVersion', 1);
+    $header->addChild('MessageRelease', 2);
+    $header->addChild('MessageAction', 'PICKUP_ORDER');
+
+    $shipments = $xml->addChild('Shipments');
+    foreach ( $this->items as $shipment_data ) {
+      $shipment = $shipments->addChild('Shipment');
+      $shipment->addChild('MessageFunctionCode', 'ORIGINAL');
+      $shipment->addChild('PickupOrderType', 'PICKUP');
+      $shipment->addChild('ShipmentNumber', $shipment_data['track_num']);
+      $shipment->addChild('ShipmentDateTime', gmdate('c'));
+
+      $pickup = $shipment->addChild('PickupDate', $date);
+      $pickup->addAttribute('timeEarliest', gmdate('H:i:sP', strtotime($date . ' ' . $this->getPickupParamsValue('time_from'))));
+      $pickup->addAttribute('timeLatest', gmdate('H:i:sP', strtotime($date . ' ' . $this->getPickupParamsValue('time_to'))));
+
+      $instructions = $shipment->addChild('Instructions');
+      $instruction = $instructions->addChild('Instruction', $this->getPickupParamsValue('info_general'));
+      $instruction->addAttribute('type', 'GENERAL');
+
+      $parties = $shipment->addChild('Parties');
+      $consignor = $parties->addChild('Party');
+      $consignor->addAttribute('role', 'CONSIGNOR');
+      $consignor->addChild('Name1', $this->getPickupAddressValue('sender'));
+      $consignor_location = $consignor->addChild('Location');
+      $consignor_location->addChild('Street1', $this->getPickupAddressValue('address_1'));
+      $consignor_location->addChild('Postcode', $this->getPickupAddressValue('postcode'));
+      $consignor_location->addChild('City', $this->getPickupAddressValue('city'));
+      $consignor_location->addChild('Country', $this->getPickupAddressValue('country'));
+      $payer = $parties->addChild('Party');
+      $payer->addAttribute('role', 'PAYER');
+      $account1 = $payer->addChild('Account', $this->getPickupParamsValue('id_customer'));
+      $account1->addAttribute('type', 'SAP_CUSTOMER');
+      $account2 = $payer->addChild('Account', $this->getPickupParamsValue('id_invoice'));
+      $account2->addAttribute('type', 'SAP_INVOICE');
+      $payer->addChild('Name1', $this->getPickupAddressValue('sender'));
+
+      $items = $shipment->addChild('GoodsItems');
+      $item = $items->addChild('GoodsItem');
+      $qty = $item->addChild('PackageQuantity', 1);
+      $qty->addAttribute('type', 'CW');
+    }
+
+    return $xml->asXML();
+  }
+
   /**
    * $pickup = array(
    *  'sender' => 'Name / Company name',
@@ -160,6 +245,47 @@ class CallCourier
   {
     $this->pickupAddress = array_merge($this->pickupAddress, $pickupAddress);
     return $this;
+  }
+
+  private function getPickupAddressValue( $value_key, $empty_value = '' )
+  {
+    if (isset($this->pickupAddress[$value_key])) {
+      $value = $this->pickupAddress[$value_key];
+      if ($value !== '' && $value !== null && $value !== false) {
+        return $value;
+      }
+    }
+
+    return $empty_value;
+  }
+
+  /**
+   * $params = array(
+   *  'date' => '2001-12-20',
+   *  'time_from' => '08:00',
+   *  'time_to' => '17:00',
+   *  'info_general' => 'Message to courier',
+   *  'id_sender' => '123',
+   *  'id_customer' => '456',
+   *  'id_invoice' => '789',
+   * );
+   */
+  public function setPickUpParams($pickupParams)
+  {
+    $this->pickupParams = array_merge($this->pickupParams, $pickupParams);
+    return $this;
+  }
+
+  private function getPickupParamsValue( $value_key, $empty_value = '' )
+  {
+    if (isset($this->pickupParams[$value_key])) {
+      $value = $this->pickupParams[$value_key];
+      if ($value !== '' && $value !== null && $value !== false) {
+        return $value;
+      }
+    }
+
+    return $empty_value;
   }
 
   public function setSenderEmail($sender_email)
@@ -183,7 +309,7 @@ class CallCourier
   /**
    * $items = array(
    *  array(
-   *    'tracking_number' => '01234567890123456789',
+   *    'track_num' => '01234567890123456789',
    *    'weight' => '1.0',
    *    'amount' => '1',
    *    'delivery_address' => 'Name / Company name. Street, Postcode City, Country',

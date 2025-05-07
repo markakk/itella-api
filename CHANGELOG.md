@@ -4,6 +4,10 @@
 ### Fixed
 - fixed disablePhoneCheck() and enablePhoneCheck() functions in Shipment\Party class
 
+### Added
+- added the ability to call a courier via the POSTRA system
+- added a separate Client class
+
 ## [2.3.9]
 ### Fixed
 - fixed deprecated function message when generating manifest
