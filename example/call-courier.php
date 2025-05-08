@@ -59,17 +59,35 @@ try {
     ->setSubject('E-com order booking')
     ->setPickUpAddress(array(
       'sender' => 'Name / Company name',
-      'address' => 'Street, Postcode City, Country',
-      'pickup_time' => '8:00 - 17:00',
-      'contact_phone' => '860000000',
+      'address_1' => 'Street 1',
+      'postcode' => '12345',
+      'city' => 'City',
+      'country' => 'LT',
+      'pickup_time' => '8:00 - 17:00', // Optional if using setPickUpParams() function
+      'contact_phone' => '+37060000000',
+    ))
+    ->setPickUpParams(array(
+      'date' => '2001-12-20',
+      'time_from' => '08:00',
+      'time_to' => '17:00',
+      'info_general' => 'Message to courier',
+      'id_sender' => '123',
+      'id_customer' => '456',
+      'id_invoice' => '789',
     ))
     ->setAttachment($manifest_string, true)
-    //->buildMailBody()
-    ->callCourier()
+    ->callCourier($p_user, $p_secret)
   ;
-  if ($result) {
-    echo 'Email sent to: <br>' . $email;
+  
+  if (!empty($result['errors'])) {
+    echo '<b>Errors:</b><br/>';
+    echo implode('<br/>', $result['errors']);
+    echo '<br/><br/>';
+  }
+  if (!empty($result['success'])) {
+    echo '<b>Success:</b><br/>';
+    echo implode('<br/>', $result['success']);
   }
 } catch (ItellaException $e) {
-  echo 'Failed to send email, reason: ' . $e->getMessage();
+  echo 'Failed to call courier, reason: ' . $e->getMessage();
 }

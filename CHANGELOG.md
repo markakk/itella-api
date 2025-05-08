@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.4.0]
+### Fixed
+- fixed disablePhoneCheck() and enablePhoneCheck() functions in Shipment\Party class
+
+### Added
+- added the ability to call a courier via the POSTRA system
+- added a separate Client class
+
+### Changed
+- unified response for all courier call methods
+- changed so that instead of a simple courier call result, an array with errors and success messages would be returned
+
 ## [2.3.9]
 ### Fixed
 - fixed deprecated function message when generating manifest
