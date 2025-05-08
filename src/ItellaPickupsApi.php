@@ -50,6 +50,27 @@ class ItellaPickupsApi
     }
     curl_close($ch);
 
+    if (is_object($response)) {
+      if (property_exists($response, 'status')) {
+        if ($response->status == 'ok') {
+          return array(
+            'status' => '200',
+            'message' => 'Request received successfully!'
+          );
+        } else {
+          return array(
+            'status' => '500',
+            'message' => 'Unknown response status - ' . $response->status
+          );
+        }
+      } else {
+        return array(
+            'status' => '500',
+            'message' => 'Unknown response object'
+          );
+      }
+    }
+
     return $response;
   }
 

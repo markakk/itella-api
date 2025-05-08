@@ -78,9 +78,16 @@ try {
     ->setAttachment($manifest_string, true)
     ->callCourier($p_user, $p_secret)
   ;
-  if ($result) {
-    echo 'Email sent to: <br>' . $email;
+  
+  if (!empty($result['errors'])) {
+    echo '<b>Errors:</b><br/>';
+    echo implode('<br/>', $result['errors']);
+    echo '<br/><br/>';
+  }
+  if (!empty($result['success'])) {
+    echo '<b>Success:</b><br/>';
+    echo implode('<br/>', $result['success']);
   }
 } catch (ItellaException $e) {
-  echo 'Failed to send email, reason: ' . $e->getMessage();
+  echo 'Failed to call courier, reason: ' . $e->getMessage();
 }

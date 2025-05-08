@@ -47,15 +47,78 @@ class CallCourier
     $this->isTest = $isTest;
   }
 
-  public function callCourier($user = '', $pass = '')
+  public function callCourier($user = '', $pass = '', $show_prefix = false)
   {
+    $active_methods = array(
+      //'api',
+      'postra',
+      'email'
+    );
+
+    $messages = array(
+      'errors' => array(),
+      'success' => array()
+    );
+    
     try {
-      //$this->callApiCourier();
-      $this->callPostraCourier($user, $pass);
+      foreach ($active_methods as $method) {
+        switch ($method) {
+          case 'api':
+            $result = $this->callApiCourier();
+            $prefix = ($show_prefix) ? 'API' : '';
+            break;
+          case 'postra':
+            $result = $this->callPostraCourier($user, $pass);
+            $prefix = ($show_prefix) ? 'POSTRA' : '';
+            break;
+          case 'email':
+            $result = $this->callMailCourier();
+            $prefix = ($show_prefix) ? 'EMAIL' : '';
+            break;
+          default:
+            continue 2;
+        }
+        if ($this->getCallError($result)) {
+          $messages['errors'][] = $this->getCallError($result, $prefix);
+        } else {
+          $messages['success'][] = $this->getCallSuccess($result, $prefix);
+        }
+      }
     } catch (\Exception $e) {
-      // Ignore this
+      $prefix = ($show_prefix) ? 'ERROR: ' : '';
+      $messages['errors'][] = $prefix . $e->getMessage();
     }
-    return $this->callMailCourier();
+    
+    return $messages;
+  }
+
+  private function getCallError($result, $prefix = '')
+  {
+    if (!empty($prefix)) {
+      $prefix .= ': ';
+    }
+    if (!is_array($result)) {
+      return $prefix . $result;
+    }
+    if (!array_key_exists('message', $result)) {
+      $result['message'] = 'Unknown error';
+    }
+    if (!array_key_exists('status', $result)) {
+      return $prefix . 'Unknown result status';
+    }
+    if ($result['status'] != '200') {
+      return $prefix . $result['message'];
+    }
+    return false;
+  }
+
+  private function getCallSuccess($result, $prefix = '')
+  {
+    if (!empty($prefix)) {
+      $prefix .= ': ';
+    }
+    $message = (array_key_exists('message', $result)) ? $result['message'] : 'Success';
+    return $prefix . $message;
   }
 
   /**
@@ -93,15 +156,24 @@ class CallCourier
       $message .= "Content-Disposition: attachment; filename=\"manifest.pdf\"" . $eol . $eol;
       $message .= rtrim(chunk_split($this->attachment)) . "$eol";
     } else {
-      throw new ItellaException('No manifest attached to call courier');
+      return array(
+        'status' => '500',
+        'message' => 'No manifest attached to courier call email'
+      );
     }
     $message .= "--" . $uid . "--";
     // Send mail with custom headers
     if (!mail($this->itella_email, $subject, $message, $headers)) {
-      throw new ItellaException('Oops, something gone wrong!');
+      return array(
+        'status' => '500',
+        'message' => 'Failed to send email via mail() function'
+      );
     }
 
-    return 'The courier will arrive between ' . $this->pickupAddress['pickup_time'];
+    return array(
+      'status' => '200',
+      'message' => 'The call email has been successfully sent to the courier'
+    );
   }
 
   public function buildMailBody()
