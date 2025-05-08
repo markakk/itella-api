@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.4.0]
 ### Fixed
 - fixed disablePhoneCheck() and enablePhoneCheck() functions in Shipment\Party class
 
