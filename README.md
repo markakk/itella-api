@@ -441,14 +441,32 @@ try {
     ->setSubject('E-com order booking') // currently it must be 'E-com order booking'
     ->setPickUpAddress(array( // strings to show in email message
       'sender' => 'Name / Company name',
-      'address' => 'Street, Postcode City, Country',
-      'contact_phone' => '860000000',
+      'address_1' => 'Street str. 1',
+      'postcode' => '12345',
+      'city' => 'City',
+      'country' => 'LT',
+      'contact_phone' => '+37060000000',
+    ))
+    ->setPickUpParams(array(
+      'date' => '2001-12-20',
+      'time_from' => '08:00',
+      'time_to' => '17:00',
+      'info_general' => 'Message to courier',
+      'id_sender' => '123',
+      'id_customer' => '456',
+      'id_invoice' => '789',
     ))
     ->setAttachment($manifest_string, true) // attachment is previously generated manifest, true - means we are passing base64 encoded string
-    ->callCourier() // send email
+    ->callCourier($p_user, $p_secret) // send call, use API username and secret key
   ;
-  if ($result) {
-    echo 'Email sent to: <br>' . $sendTo;
+  if (!empty($result['errors'])) {
+    echo '<b>Errors:</b><br/>';
+    echo implode('<br/>', $result['errors']);
+    echo '<br/><br/>';
+  }
+  if (!empty($result['success'])) {
+    echo '<b>Success:</b><br/>';
+    echo implode('<br/>', $result['success']);
   }
 } catch (ItellaException $e) { // catch if something goes wrong
   echo 'Failed to send email, reason: ' . $e->getMessage();
@@ -506,13 +524,28 @@ try {
       'pickup_time' => '8:00 - 17:00',
       'contact_phone' => '+37060000000',
     ))
+    ->setPickUpParams(array(
+      'date' => '2001-12-20',
+      'time_from' => '08:00',
+      'time_to' => '17:00',
+      'info_general' => 'Message to courier',
+      'id_sender' => '123',
+      'id_customer' => '456',
+      'id_invoice' => '789',
+    ))
     ->setAttachment($manifest_string, true) // attachment is previously generated manifest, true - means we are passing base64 encoded string
     ->setItems($items) // add orders
     ->setTranslates($translates) // add translated email text
-    ->callCourier() // send email
+    ->callCourier($p_user, $p_secret) // send call
   ;
-  if ($result) {
-    echo 'Email sent to: <br>' . $sendTo;
+  if (!empty($result['errors'])) {
+    echo '<b>Errors:</b><br/>';
+    echo implode('<br/>', $result['errors']);
+    echo '<br/><br/>';
+  }
+  if (!empty($result['success'])) {
+    echo '<b>Success:</b><br/>';
+    echo implode('<br/>', $result['success']);
   }
 } catch (ItellaException $e) { // catch if something goes wrong
   echo 'Failed to send email, reason: ' . $e->getMessage();
