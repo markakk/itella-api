@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- fixed POSTRA query error
+
+### Added
+- added phone number to POSTRA request
+
 ## [2.4.1]
 ### Fixed
 - fixed the courier invitation Email method not trying to add new header if headers have already been sent

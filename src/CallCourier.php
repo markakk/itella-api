@@ -355,10 +355,11 @@ class CallCourier
       $consignor_location->addChild('Postcode', $this->getPickupAddressValue('postcode'));
       $consignor_location->addChild('City', $this->getPickupAddressValue('city'));
       $consignor_location->addChild('Country', $this->getPickupAddressValue('country'));
+      $consignor_contact = $consignor->addChild('ContactChannel', $this->getPickupAddressValue('contact_phone'));
+      $consignor_contact->addAttribute('channel', 'MOBILE');
       $payer = $parties->addChild('Party');
       if (!empty($payer_data['name'])) {
         $payer->addAttribute('role', 'PAYER');
-        $payer->addChild('Name1', $payer_data['name']);
         if (!empty($payer_data['customer'])) {
           $account1 = $payer->addChild('Account', $payer_data['customer']);
           $account1->addAttribute('type', 'SAP_CUSTOMER');
@@ -367,6 +368,7 @@ class CallCourier
           $account2 = $payer->addChild('Account', $payer_data['invoice']);
           $account2->addAttribute('type', 'SAP_INVOICE');
         }
+        $payer->addChild('Name1', $payer_data['name']);
       }
 
       $items = $shipment->addChild('GoodsItems');
