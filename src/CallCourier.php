@@ -29,8 +29,6 @@ class CallCourier
     'time_to' => '17:00',
     'info_general' => '',
     'id_sender' => '',
-    'id_customer' => '',
-    'id_invoice' => '',
   );
   private $subject = 'Call Itella Courier';
   private $items = array();
@@ -299,6 +297,13 @@ class CallCourier
     $this->setUsername($user);
     $this->setPassword($pass);
 
+    if (!$this->isPostraMethodAvailable()) {
+      return array(
+        'status' => '500',
+        'message' => 'Call via POSTRA is not allowed',
+      );
+    }
+
     $client = new Client($this->getUsername(), $this->getPassword(), $this->isTest);
     $token = $client->getAccessToken();
 
@@ -310,6 +315,7 @@ class CallCourier
   private function buildPostraXml()
   {
     $date = $this->getPickupParamsValue('date', date('Y-m-d', strtotime('+1 day')));
+    $payer_data = $this->getPostraPayerData();
 
     $xml = new \SimpleXMLElement('<Postra/>');
     $xml->addAttribute('xmlns', 'http://api.posti.fi/xml/POSTRA/1');
@@ -325,7 +331,7 @@ class CallCourier
     $header->addChild('MessageAction', 'PICKUP_ORDER');
 
     $shipments = $xml->addChild('Shipments');
-    foreach ( $this->items as $shipment_data ) {
+    foreach ($this->items as $shipment_data) {
       $shipment = $shipments->addChild('Shipment');
       $shipment->addChild('MessageFunctionCode', 'ORIGINAL');
       $shipment->addChild('PickupOrderType', 'PICKUP');
@@ -350,12 +356,18 @@ class CallCourier
       $consignor_location->addChild('City', $this->getPickupAddressValue('city'));
       $consignor_location->addChild('Country', $this->getPickupAddressValue('country'));
       $payer = $parties->addChild('Party');
-      $payer->addAttribute('role', 'PAYER');
-      $account1 = $payer->addChild('Account', $this->getPickupParamsValue('id_customer'));
-      $account1->addAttribute('type', 'SAP_CUSTOMER');
-      $account2 = $payer->addChild('Account', $this->getPickupParamsValue('id_invoice'));
-      $account2->addAttribute('type', 'SAP_INVOICE');
-      $payer->addChild('Name1', $this->getPickupAddressValue('sender'));
+      if (!empty($payer_data['name'])) {
+        $payer->addAttribute('role', 'PAYER');
+        $payer->addChild('Name1', $payer_data['name']);
+        if (!empty($payer_data['customer'])) {
+          $account1 = $payer->addChild('Account', $payer_data['customer']);
+          $account1->addAttribute('type', 'SAP_CUSTOMER');
+        }
+        if (!empty($payer_data['invoice'])) {
+          $account2 = $payer->addChild('Account', $payer_data['invoice']);
+          $account2->addAttribute('type', 'SAP_INVOICE');
+        }
+      }
 
       $items = $shipment->addChild('GoodsItems');
       $item = $items->addChild('GoodsItem');
@@ -364,6 +376,25 @@ class CallCourier
     }
 
     return $xml->asXML();
+  }
+
+  private function getPostraPayerData()
+  {
+    $payers = array(
+      'LT' => array(
+        'customer' => '919643',
+        'invoice' => '',
+        'name' => 'SmartPosti UAB'
+      ),
+      'LV' => array(
+        'customer' => '919641',
+        'invoice' => '',
+        'name' => 'SmartPosti SIA'
+      )
+    );
+
+    $country = strtoupper($this->getPickupAddressValue('country'));
+    return (isset($payers[$country])) ? $payers[$country] : $payers['LV'];
   }
 
   /***************************************
@@ -447,8 +478,6 @@ class CallCourier
    *  'time_to' => '17:00',
    *  'info_general' => 'Message to courier',
    *  'id_sender' => '123',
-   *  'id_customer' => '456',
-   *  'id_invoice' => '789',
    * );
    */
   public function setPickUpParams($pickupParams)

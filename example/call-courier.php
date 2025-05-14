@@ -71,9 +71,7 @@ try {
       'time_from' => '08:00',
       'time_to' => '17:00',
       'info_general' => 'Message to courier',
-      'id_sender' => '123',
-      'id_customer' => '456',
-      'id_invoice' => '789',
+      'id_sender' => '123', // Company code or VAT code
     ))
     ->setAttachment($manifest_string, true)
     ->callCourier($p_user, $p_secret)
