@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.4.2]
 ### Fixed
 - fixed POSTRA query error
 
