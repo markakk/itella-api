@@ -8,6 +8,8 @@ use Mijora\Itella\ItellaPickupsApi;
 
 class CallCourier
 {
+  private $username = '';
+  private $password = '';
   private $itella_email;
   private $sender_email;
   private $attachment = false; // attachement
@@ -27,8 +29,6 @@ class CallCourier
     'time_to' => '17:00',
     'info_general' => '',
     'id_sender' => '',
-    'id_customer' => '',
-    'id_invoice' => '',
   );
   private $subject = 'Call Itella Courier';
   private $items = array();
@@ -47,10 +47,14 @@ class CallCourier
     $this->isTest = $isTest;
   }
 
+  /***************************************
+   * General
+   **************************************/
+
   public function callCourier($user = '', $pass = '', $show_prefix = false)
   {
     $active_methods = array(
-      //'api',
+      'api',
       'postra',
       'email'
     );
@@ -59,19 +63,31 @@ class CallCourier
       'errors' => array(),
       'success' => array()
     );
+
+    $this->setUsername($user);
+    $this->setPassword($pass);
     
     try {
       foreach ($active_methods as $method) {
         switch ($method) {
           case 'api':
+            if (!$this->isApiMethodAvailable()) {
+              continue 2;
+            }
             $result = $this->callApiCourier();
             $prefix = ($show_prefix) ? 'API' : '';
             break;
           case 'postra':
+            if (!$this->isPostraMethodAvailable()) {
+              continue 2;
+            }
             $result = $this->callPostraCourier($user, $pass);
             $prefix = ($show_prefix) ? 'POSTRA' : '';
             break;
           case 'email':
+            if (!$this->isEmailMethodAvailable()) {
+              continue 2;
+            }
             $result = $this->callMailCourier();
             $prefix = ($show_prefix) ? 'EMAIL' : '';
             break;
@@ -90,6 +106,35 @@ class CallCourier
     }
     
     return $messages;
+  }
+
+  private function isApiMethodAvailable()
+  {
+    if ($this->isPostraMethodAvailable()) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private function isPostraMethodAvailable()
+  {
+    $available_countries = array('LT', 'LV');
+
+    if (empty($this->getUsername()) || empty($this->getPassword())) {
+      return false;
+    }
+
+    if (!in_array($this->pickupAddress['country'], $available_countries)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private function isEmailMethodAvailable()
+  {
+    return true;
   }
 
   private function getCallError($result, $prefix = '')
@@ -121,6 +166,10 @@ class CallCourier
     return $prefix . $message;
   }
 
+  /***************************************
+   * Method: Email
+   **************************************/
+
   /**
    * Sends email using mail() even if successfull does not mean mail will reach recipient
    * 
@@ -128,8 +177,10 @@ class CallCourier
    */
   public function callMailCourier()
   {
-    // Force PHP to use the UTF-8 charset
-    header('Content-Type: text/html; charset=utf-8');
+    if (!headers_sent()) {
+      // Force PHP to use the UTF-8 charset
+      header('Content-Type: text/html; charset=utf-8');
+    }
 
     $uid = md5(uniqid(time()));
     // Define and Base64 encode the subject line
@@ -203,27 +254,16 @@ class CallCourier
     return $body;
   }
 
+  /***************************************
+   * Method: API
+   **************************************/
+
   public function callApiCourier()
   {
     $ItellaPickupsApi = new ItellaPickupsApi();
     $response = $ItellaPickupsApi->request('pickups', $this->buildApiRequest());
 
     return $response ? $response : false;
-  }
-
-  public function callPostraCourier($user, $pass)
-  {
-    $url = 'https://connect.posti.fi/transportation/v1/';
-    if ($this->isTest) {
-      $url = 'https://connect.ja.posti.fi/kasipallo/transportation/v1/';
-    }
-
-    $client = new Client($user, $pass, $this->isTest);
-    $token = $client->getAccessToken();
-
-    $ItellaPickupsApi = new ItellaPickupsApi($url);
-    $ItellaPickupsApi->setToken($token);
-    return $ItellaPickupsApi->requestXml('orders', $this->buildPostraXml());
   }
 
   public function buildApiRequest()
@@ -243,9 +283,39 @@ class CallCourier
     return $data;
   }
 
+  /***************************************
+   * Method: POSTRA
+   **************************************/
+
+  public function callPostraCourier($user, $pass)
+  {
+    $url = 'https://connect.posti.fi/transportation/v1/';
+    if ($this->isTest) {
+      $url = 'https://connect.ja.posti.fi/kasipallo/transportation/v1/';
+    }
+
+    $this->setUsername($user);
+    $this->setPassword($pass);
+
+    if (!$this->isPostraMethodAvailable()) {
+      return array(
+        'status' => '500',
+        'message' => 'Call via POSTRA is not allowed',
+      );
+    }
+
+    $client = new Client($this->getUsername(), $this->getPassword(), $this->isTest);
+    $token = $client->getAccessToken();
+
+    $ItellaPickupsApi = new ItellaPickupsApi($url);
+    $ItellaPickupsApi->setToken($token);
+    return $ItellaPickupsApi->requestXml('orders', $this->buildPostraXml());
+  }
+
   private function buildPostraXml()
   {
     $date = $this->getPickupParamsValue('date', date('Y-m-d', strtotime('+1 day')));
+    $payer_data = $this->getPostraPayerData();
 
     $xml = new \SimpleXMLElement('<Postra/>');
     $xml->addAttribute('xmlns', 'http://api.posti.fi/xml/POSTRA/1');
@@ -261,7 +331,7 @@ class CallCourier
     $header->addChild('MessageAction', 'PICKUP_ORDER');
 
     $shipments = $xml->addChild('Shipments');
-    foreach ( $this->items as $shipment_data ) {
+    foreach ($this->items as $shipment_data) {
       $shipment = $shipments->addChild('Shipment');
       $shipment->addChild('MessageFunctionCode', 'ORIGINAL');
       $shipment->addChild('PickupOrderType', 'PICKUP');
@@ -286,12 +356,18 @@ class CallCourier
       $consignor_location->addChild('City', $this->getPickupAddressValue('city'));
       $consignor_location->addChild('Country', $this->getPickupAddressValue('country'));
       $payer = $parties->addChild('Party');
-      $payer->addAttribute('role', 'PAYER');
-      $account1 = $payer->addChild('Account', $this->getPickupParamsValue('id_customer'));
-      $account1->addAttribute('type', 'SAP_CUSTOMER');
-      $account2 = $payer->addChild('Account', $this->getPickupParamsValue('id_invoice'));
-      $account2->addAttribute('type', 'SAP_INVOICE');
-      $payer->addChild('Name1', $this->getPickupAddressValue('sender'));
+      if (!empty($payer_data['name'])) {
+        $payer->addAttribute('role', 'PAYER');
+        $payer->addChild('Name1', $payer_data['name']);
+        if (!empty($payer_data['customer'])) {
+          $account1 = $payer->addChild('Account', $payer_data['customer']);
+          $account1->addAttribute('type', 'SAP_CUSTOMER');
+        }
+        if (!empty($payer_data['invoice'])) {
+          $account2 = $payer->addChild('Account', $payer_data['invoice']);
+          $account2->addAttribute('type', 'SAP_INVOICE');
+        }
+      }
 
       $items = $shipment->addChild('GoodsItems');
       $item = $items->addChild('GoodsItem');
@@ -300,6 +376,79 @@ class CallCourier
     }
 
     return $xml->asXML();
+  }
+
+  private function getPostraPayerData()
+  {
+    $payers = array(
+      'LT' => array(
+        'customer' => '919643',
+        'invoice' => '',
+        'name' => 'SmartPosti UAB'
+      ),
+      'LV' => array(
+        'customer' => '919641',
+        'invoice' => '',
+        'name' => 'SmartPosti SIA'
+      )
+    );
+
+    $country = strtoupper($this->getPickupAddressValue('country'));
+    return (isset($payers[$country])) ? $payers[$country] : $payers['LV'];
+  }
+
+  /***************************************
+   * Helpers
+   **************************************/
+
+  private function getPickupAddressValue( $value_key, $empty_value = '' )
+  {
+    if (isset($this->pickupAddress[$value_key])) {
+      $value = $this->pickupAddress[$value_key];
+      if ($value !== '' && $value !== null && $value !== false) {
+        return $value;
+      }
+    }
+
+    return $empty_value;
+  }
+
+  private function getPickupParamsValue( $value_key, $empty_value = '' )
+  {
+    if (isset($this->pickupParams[$value_key])) {
+      $value = $this->pickupParams[$value_key];
+      if ($value !== '' && $value !== null && $value !== false) {
+        return $value;
+      }
+    }
+
+    return $empty_value;
+  }
+
+  /***************************************
+   * Setters and Getters
+   **************************************/
+
+  public function setUsername($username)
+  {
+    $this->username = $username;
+    return $this;
+  }
+
+  private function getUsername()
+  {
+    return $this->username;
+  }
+
+  public function setPassword($password)
+  {
+    $this->password = $password;
+    return $this;
+  }
+
+  private function getPassword()
+  {
+    return $this->password;
   }
 
   /**
@@ -322,18 +471,6 @@ class CallCourier
     return $this;
   }
 
-  private function getPickupAddressValue( $value_key, $empty_value = '' )
-  {
-    if (isset($this->pickupAddress[$value_key])) {
-      $value = $this->pickupAddress[$value_key];
-      if ($value !== '' && $value !== null && $value !== false) {
-        return $value;
-      }
-    }
-
-    return $empty_value;
-  }
-
   /**
    * $params = array(
    *  'date' => '2001-12-20',
@@ -341,26 +478,12 @@ class CallCourier
    *  'time_to' => '17:00',
    *  'info_general' => 'Message to courier',
    *  'id_sender' => '123',
-   *  'id_customer' => '456',
-   *  'id_invoice' => '789',
    * );
    */
   public function setPickUpParams($pickupParams)
   {
     $this->pickupParams = array_merge($this->pickupParams, $pickupParams);
     return $this;
-  }
-
-  private function getPickupParamsValue( $value_key, $empty_value = '' )
-  {
-    if (isset($this->pickupParams[$value_key])) {
-      $value = $this->pickupParams[$value_key];
-      if ($value !== '' && $value !== null && $value !== false) {
-        return $value;
-      }
-    }
-
-    return $empty_value;
   }
 
   public function setSenderEmail($sender_email)

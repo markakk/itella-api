@@ -452,9 +452,7 @@ try {
       'time_from' => '08:00',
       'time_to' => '17:00',
       'info_general' => 'Message to courier',
-      'id_sender' => '123',
-      'id_customer' => '456',
-      'id_invoice' => '789',
+      'id_sender' => '123', // sender company code or VAT code
     ))
     ->setAttachment($manifest_string, true) // attachment is previously generated manifest, true - means we are passing base64 encoded string
     ->callCourier($p_user, $p_secret) // send call, use API username and secret key
@@ -529,9 +527,7 @@ try {
       'time_from' => '08:00',
       'time_to' => '17:00',
       'info_general' => 'Message to courier',
-      'id_sender' => '123',
-      'id_customer' => '456',
-      'id_invoice' => '789',
+      'id_sender' => '123', // sender company code or VAT code
     ))
     ->setAttachment($manifest_string, true) // attachment is previously generated manifest, true - means we are passing base64 encoded string
     ->setItems($items) // add orders

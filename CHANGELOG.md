@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.4.1]
+### Fixed
+- fixed the courier invitation Email method not trying to add new header if headers have already been sent
+
+### Added
+- new functions setUsername() and setPassword() added to the CallCourier class
+
+### Changed
+- The courier invitation POSTRA method is used only if the country indicated in the sender's address is LT or LV.
+
 ## [2.4.0]
 ### Fixed
 - fixed disablePhoneCheck() and enablePhoneCheck() functions in Shipment\Party class
