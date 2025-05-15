@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- fixed a bug in the POSTRA method where user logins are passed through separate functions, instead of directly to the calling function
+
+### Added
+- added a message about invalid logins when the courier is called via POSTRA
+
+### Changed
+- removed the ability to specify logins in a courier invitation by passing them directly to the invitation function. The `setUsername()` and `setPassword()` functions must be used.
+- changed that when calling a courier in LT and LV, the API method will not be used
+
 ## [2.4.2]
 ### Fixed
 - fixed POSTRA query error

@@ -40,6 +40,7 @@ class CallCourier
     'mail_pickup_time' => 'Pickup time',
     'mail_attachment' => 'See attachment for manifest PDF.',
   );
+  private $show_prefix = false;
 
   public function __construct($itella_email = '', $isTest = false)
   {
@@ -51,7 +52,7 @@ class CallCourier
    * General
    **************************************/
 
-  public function callCourier($user = '', $pass = '', $show_prefix = false)
+  public function callCourier()
   {
     $active_methods = array(
       'api',
@@ -63,9 +64,6 @@ class CallCourier
       'errors' => array(),
       'success' => array()
     );
-
-    $this->setUsername($user);
-    $this->setPassword($pass);
     
     try {
       foreach ($active_methods as $method) {
@@ -75,21 +73,21 @@ class CallCourier
               continue 2;
             }
             $result = $this->callApiCourier();
-            $prefix = ($show_prefix) ? 'API' : '';
+            $prefix = 'API';
             break;
           case 'postra':
             if (!$this->isPostraMethodAvailable()) {
               continue 2;
             }
-            $result = $this->callPostraCourier($user, $pass);
-            $prefix = ($show_prefix) ? 'POSTRA' : '';
+            $result = $this->callPostraCourier();
+            $prefix = 'POSTRA';
             break;
           case 'email':
             if (!$this->isEmailMethodAvailable()) {
               continue 2;
             }
             $result = $this->callMailCourier();
-            $prefix = ($show_prefix) ? 'EMAIL' : '';
+            $prefix = 'EMAIL';
             break;
           default:
             continue 2;
@@ -101,16 +99,30 @@ class CallCourier
         }
       }
     } catch (\Exception $e) {
-      $prefix = ($show_prefix) ? 'ERROR: ' : '';
+      $prefix = ($this->show_prefix) ? 'ERROR: ' : '';
       $messages['errors'][] = $prefix . $e->getMessage();
     }
     
     return $messages;
   }
 
+  private function isLoginsCorrect()
+  {
+    $username = trim($this->getUsername());
+    $password = trim($this->getPassword());
+
+    if (empty($username) || empty($password)) {
+      return false;
+    }
+
+    return true;
+  }
+
   private function isApiMethodAvailable()
   {
-    if ($this->isPostraMethodAvailable()) {
+    $not_allowed_countries = array('LT', 'LV');
+
+    if (in_array($this->pickupAddress['country'], $not_allowed_countries)) {
       return false;
     }
 
@@ -119,13 +131,9 @@ class CallCourier
 
   private function isPostraMethodAvailable()
   {
-    $available_countries = array('LT', 'LV');
+    $allowed_countries = array('LT', 'LV');
 
-    if (empty($this->getUsername()) || empty($this->getPassword())) {
-      return false;
-    }
-
-    if (!in_array($this->pickupAddress['country'], $available_countries)) {
+    if (!in_array($this->pickupAddress['country'], $allowed_countries)) {
       return false;
     }
 
@@ -139,7 +147,7 @@ class CallCourier
 
   private function getCallError($result, $prefix = '')
   {
-    if (!empty($prefix)) {
+    if ($this->show_prefix && !empty($prefix)) {
       $prefix .= ': ';
     }
     if (!is_array($result)) {
@@ -287,20 +295,24 @@ class CallCourier
    * Method: POSTRA
    **************************************/
 
-  public function callPostraCourier($user, $pass)
+  public function callPostraCourier()
   {
     $url = 'https://connect.posti.fi/transportation/v1/';
     if ($this->isTest) {
       $url = 'https://connect.ja.posti.fi/kasipallo/transportation/v1/';
     }
 
-    $this->setUsername($user);
-    $this->setPassword($pass);
-
     if (!$this->isPostraMethodAvailable()) {
       return array(
         'status' => '500',
         'message' => 'Call via POSTRA is not allowed',
+      );
+    }
+
+    if (!$this->isLoginsCorrect()) {
+      return array(
+        'status' => '500',
+        'message' => 'Invalid API logins',
       );
     }
 
@@ -525,6 +537,12 @@ class CallCourier
   public function setTranslates($translates)
   {
     $this->translates = array_merge($this->translates, $translates);
+    return $this;
+  }
+
+  public function showMessagesPrefix($show)
+  {
+    $this->show_prefix = (bool)$show;
     return $this;
   }
 }
