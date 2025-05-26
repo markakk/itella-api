@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.4.4]
 ### Fixed
 - fixed prefix control
 - fixed pickup time automatic generation
