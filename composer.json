@@ -31,5 +31,10 @@
                 "Fix PHP compatibility in addChild method": "patches/fix-addchild-signature.patch"
             }
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "cweagans/composer-patches": true
+        }
     }
 }
