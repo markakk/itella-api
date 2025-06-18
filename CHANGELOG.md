@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.4.5]
+### Added
+- added the ability to add fixes to used third-party libraries (it uses the patching library cweagans/composer-patches)
+- added a patch for the SimpleXMLElement class of the Pakettikauppa library
+
 ## [2.4.4]
 ### Fixed
 - fixed prefix control
