@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- fixed to display an error message when a timeout occurs while trying to get a Access Token
+
 ## [2.4.5]
 ### Added
 - added the ability to add fixes to used third-party libraries (it uses the patching library cweagans/composer-patches)
