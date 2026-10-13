@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.5.2]
 ### Added
 - added new additional services: 3376
 
