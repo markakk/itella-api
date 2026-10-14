@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.5.3]
 ### Fixed
 - fixed pickup point shipments receiving address of a wrong location when Locations API returns more than one location
 
